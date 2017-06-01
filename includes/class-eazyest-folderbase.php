@@ -134,6 +134,7 @@ class Eazyest_FolderBase {
 		// filters related to metadata 
 		add_filter( 'get_attached_file',               array( $this, 'get_attached_file'            ),  20, 2 );
 		add_filter( 'wp_get_attachment_url',           array( $this, 'get_attachment_url'           ),  20, 2 );
+		add_filter( 'wp_calculate_image_srcset_meta',  array( $this, 'get_image_srcset_meta'        ),  20, 4 );
 		add_filter( 'update_post_metadata',            array( $this, 'update_attachment_metadata'   ),  20, 5 );
 		add_filter( 'wp_get_attachment_metadata',      array( $this, 'get_attachment_metadata'      ),  10, 2 );
 		add_filter( 'wp_generate_attachment_metadata', array( $this, 'generate_attachment_metadata' ),   1, 2 );
@@ -1425,6 +1426,25 @@ class Eazyest_FolderBase {
 	}
 	
 	/**
+	 * Eazyest_FolderBase::get_image_srcset_meta()
+	 * Filter for wp_calculate_image_srcset_meta()
+	 * Returns image_meta with gallery path relative to upload folder
+	 *
+	 * @since 0.1.0 (r2)
+	 * @param array $image_meta
+	 * @param array $size_array
+	 * @param string $image_src
+	 * @param int $attachment_id
+	 * @return array
+	 */
+	public function get_image_srcset_meta( $image_meta, $size_array, $image_src, $attachment_id ) {
+
+		$image_meta['file'] = eazyest_gallery()->root(true) . $image_meta['file'];
+
+		return $image_meta;
+	}
+	
+	/**
 	 * Eazyest_FolderBase::create_file_in_uploads()
 	 * When a file is created in cache, return the cache path.
 	 * 
@@ -1878,7 +1898,8 @@ class Eazyest_FolderBase {
 		if ( function_exists( 'exif_read_data' ) ) {
 			// run this when image has not been checked on rotation based on exif info
 			if ( ! isset( $metadata['eazyest_exif'] ) ) {
-				if ( $exif = exif_read_data( eazyest_gallery()->root() . $file ) ) {
+				$filepath = eazyest_gallery()->root() . $file;
+				if ( file_exists( $filepath ) && $exif = exif_read_data( $filepath ) ) {
 					$orientation = isset ( $exif['Orientation'] ) ? $exif['Orientation'] : 0;
 					// rotate original because many browser don't display the image correctly on the attachment page
 					if ( in_array( $orientation, array( 3, 6, 8 ) ) && apply_filters( 'eazyest_gallery_rotate_original', true ) ) {

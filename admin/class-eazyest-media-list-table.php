@@ -255,7 +255,7 @@ class Eazyest_Media_List_Table extends WP_List_Table {
 	 * @uses apply_filters
 	 * @return void
 	 */
-	function bulk_actions() {
+	function bulk_actions($which = '') {
 		if ( is_null( $this->_actions ) ) {
 			$no_new_actions = $this->_actions = $this->get_bulk_actions();
 			// This filter can currently only be used to remove actions.

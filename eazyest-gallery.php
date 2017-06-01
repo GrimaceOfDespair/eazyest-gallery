@@ -390,25 +390,31 @@ class Eazyest_Gallery {
 	 */
 	private function set_gallery_folder() {
 		$gallery_folder = $this->gallery_folder;
-  	$this->root = str_replace( '\\', '/', trailingslashit( $this->get_absolute_path( ABSPATH . $gallery_folder ) ) );
-  	
-  	$http = empty( $_SERVER['HTTPS'] ) || 'off' == $_SERVER['HTTPS'] ? 'http://' : 'https://';  	
-    $port = ( $_SERVER["SERVER_PORT"] == '80' ) ? '' : ( ':' . $_SERVER['SERVER_PORT'] );
-    
-  	$this->address = trailingslashit( $this->_resolve_href( trailingslashit( $http . $_SERVER['HTTP_HOST'] . $port ), substr( $this->root, strlen( $this->home_dir() ) ) ) );
+		$this->root = str_replace( '\\', '/', trailingslashit( $this->get_absolute_path( ABSPATH . $gallery_folder ) ) );
+
+		$uploads = wp_upload_dir();
+		$basedir = $uploads['basedir'];
+		$this->relative_root = $this->get_relative_path( $basedir, $this->root );
+
+	 	$http = empty( $_SERVER['HTTPS'] ) || 'off' == $_SERVER['HTTPS'] ? 'http://' : 'https://';
+		$port = ( $_SERVER["SERVER_PORT"] == '80' ) ? '' : ( ':' . $_SERVER['SERVER_PORT'] );
+
+		$this->address = trailingslashit( $this->_resolve_href( trailingslashit( $http . $_SERVER['HTTP_HOST'] . $port ), substr( $this->root, strlen( $this->home_dir() ) ) ) );
 	}
-	
+
 	/**
 	 * Eazyest_Gallery::root()
 	 * path to gallery root.
-	 * 
+	 *
 	 * @since lazyest-gallery 1.1.0
-	 * @return string 
+	 * @param bool $relative
+	 * @return string
 	 */
-	public function root() {
+	public function root( $relative = false ) {
 		$this->set_gallery_folder();
-		return $this->root;
+		return $relative ? $this->relative_root : $this->root;
 	}
+
 	
 	/**
 	 * Eazyest_Gallery::address()
