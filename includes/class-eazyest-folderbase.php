@@ -134,7 +134,6 @@ class Eazyest_FolderBase {
 		// filters related to metadata
 		add_filter( 'get_attached_file',               array( $this, 'get_attached_file'            ),  20, 2 );
 		add_filter( 'wp_get_attachment_url',           array( $this, 'get_attachment_url'           ),  20, 2 );
-		add_filter( 'wp_calculate_image_srcset_meta',  array( $this, 'get_image_srcset_meta'        ),  20, 4 );
 		add_filter( 'update_post_metadata',            array( $this, 'update_attachment_metadata'   ),  20, 5 );
 		add_filter( 'wp_get_attachment_metadata',      array( $this, 'get_attachment_metadata'      ),  10, 2 );
 		add_filter( 'wp_generate_attachment_metadata', array( $this, 'generate_attachment_metadata' ),   1, 2 );
@@ -1423,25 +1422,6 @@ class Eazyest_FolderBase {
 			$url = eazyest_gallery()->address() . $attached_file;
 		}
 		return $url;
-	}
-
-	/**
-	 * Eazyest_FolderBase::get_image_srcset_meta()
-	 * Filter for wp_calculate_image_srcset_meta()
-	 * Returns image_meta with gallery path relative to upload folder
-	 *
-	 * @since 0.1.0 (r2)
-	 * @param array $image_meta
-	 * @param array $size_array
-	 * @param string $image_src
-	 * @param int $attachment_id
-	 * @return array
-	 */
-	public function get_image_srcset_meta( $image_meta, $size_array, $image_src, $attachment_id ) {
-
-		$image_meta['file'] = eazyest_gallery()->root(true) . $image_meta['file'];
-
-		return $image_meta;
 	}
 
 	/**

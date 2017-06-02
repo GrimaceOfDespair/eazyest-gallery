@@ -151,23 +151,24 @@ class Eazyest_Frontend {
 	 * @return void
 	 */
 	function filters() {
-		add_filter( 'pre_get_posts',          array( $this, 'pre_get_posts'       )        );
+		add_filter( 'pre_get_posts',                   array( $this, 'pre_get_posts'         )        );
 		// post thumbnail filters
-		add_filter( 'get_post_metadata',      array( $this, 'post_thumbnail_id'   ), 10, 3 );
-		add_filter( 'post_thumbnail_size',    array( $this, 'post_thumbnail_size' ), 20    );
-		add_filter( 'post_thumbnail_html',    array( $this, 'post_thumbnail_html' ), 10, 2 );
+		add_filter( 'get_post_metadata',               array( $this, 'post_thumbnail_id'     ), 10, 3 );
+		add_filter( 'post_thumbnail_size',             array( $this, 'post_thumbnail_size'   ), 20    );
+		add_filter( 'post_thumbnail_html',             array( $this, 'post_thumbnail_html'   ), 10, 2 );
+		add_filter( 'wp_calculate_image_srcset_meta',  array( $this, 'get_image_srcset_meta' ),  20, 4 );
 		// template filters
-		add_filter( 'template_include',       array( $this, 'template_include'    )        );
+		add_filter( 'template_include',                array( $this, 'template_include'      )        );
 		// attachmnent filters
-		add_filter( 'attachment_link',        array( $this, 'attachment_link'     ), 30, 2 );
-		add_filter( 'wp_get_attachment_link', array( $this, 'add_attr_to_link'    ), 40, 2 );
-		add_filter( 'wp_get_attachment_url',  array( $this, 'attachment_link'     ), 99, 2 );
+		add_filter( 'attachment_link',                 array( $this, 'attachment_link'       ), 30, 2 );
+		add_filter( 'wp_get_attachment_link',          array( $this, 'add_attr_to_link'      ), 40, 2 );
+		add_filter( 'wp_get_attachment_url',           array( $this, 'attachment_link'       ), 99, 2 );
 		// content filters
-		add_filter( 'the_content',            array( $this, 'folder_content'      ), 99    );
-		add_filter( 'the_excerpt',            array( $this, 'folder_content'      ), 99    );
+		add_filter( 'the_content',                     array( $this, 'folder_content'        ), 99    );
+		add_filter( 'the_excerpt',                     array( $this, 'folder_content'        ), 99    );
 		// widget_filters
-		add_filter( 'widget_comments_args',   array( $this, 'widget_comments'     )        );
-		add_filter( 'widget_posts_args',      array( $this, 'widget_posts'        )        );
+		add_filter( 'widget_comments_args',            array( $this, 'widget_comments'       )        );
+		add_filter( 'widget_posts_args',               array( $this, 'widget_posts'          )        );
 	}
 
 	/**
@@ -640,6 +641,25 @@ class Eazyest_Frontend {
 			}
 		}
 		return $html;
+	}
+
+	/**
+	 * Eazyest_Frontend::get_image_srcset_meta()
+	 * Filter for wp_calculate_image_srcset_meta()
+	 * Returns image_meta with gallery path relative to upload folder
+	 *
+	 * @since 0.1.0 (r2)
+	 * @param array $image_meta
+	 * @param array $size_array
+	 * @param string $image_src
+	 * @param int $attachment_id
+	 * @return array
+	 */
+	public function get_image_srcset_meta( $image_meta, $size_array, $image_src, $attachment_id ) {
+
+		$image_meta['file'] = eazyest_gallery()->root(true) . $image_meta['file'];
+
+		return $image_meta;
 	}
 
 	/**
