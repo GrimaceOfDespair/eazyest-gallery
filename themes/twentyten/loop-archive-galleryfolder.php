@@ -39,19 +39,19 @@
 	<?php $ezg_i = 0; ?>
 	<?php /* Start the Loop. */ ?>
 	<?php while ( have_posts() ) : the_post(); ?>
-	
+
 		<<?php ezg_itemtag(); ?> class="gallery-item folder-item">
-								
+
 			<?php do_action( 'eazyest_gallery_before_folder_icon', $post->ID ); ?>
-			
+
 			<<?php ezg_icontag(); ?> class="gallery-icon folder-icon">
 				<a href="<?php the_permalink(); ?>" title="<?php echo esc_attr( sprintf( __( 'View folder &#8220;%s&#8221;', 'eazyest-gallery' ), the_title_attribute( 'echo=0' ) ) ); ?>" rel="bookmark">
-					<?php ezg_folder_thumbnail(); ?> 
+					<?php ezg_folder_thumbnail(); ?>
 				</a>
 			</<?php ezg_icontag(); ?>>
-			
+
 			<?php do_action( 'eazyest_gallery_after_folder_icon', $post->ID ); ?>
-			
+
 		</<?php ezg_itemtag(); ?>>
 	<?php ezg_folders_break( ++$ezg_i ); ?>
 	<?php endwhile; // End the loop ?>

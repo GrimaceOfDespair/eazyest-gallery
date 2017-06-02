@@ -25,14 +25,14 @@ get_header(); ?>
 				<?php
 				/* Start the Loop */
 				while ( have_posts() ) : the_post();
-	
+
 					/* Include the post format-specific template for the content. If you want to overload
 					 * this in a child theme then include a file called called content-galleryfolder.php
 					 */
 					ezg_get_template_part( 'content', 'galleryfolder' );
-				
-				ezg_folders_break( ++$ezg_i ); 
-				endwhile; ?>				
+
+				ezg_folders_break( ++$ezg_i );
+				endwhile; ?>
 				<br style="clear: both;"/>
 				<?php	do_action( 'eazyest_gallery_end_of_gallery' ); ?>
 			</div><!-- #eazyest-gallery-0 -->

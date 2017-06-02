@@ -29,15 +29,15 @@ get_header(); ?>
 					<?php $ezg_i = 0; ?>
 					<?php /* Start the Loop */ ?>
 					<?php while ( have_posts() ) : the_post(); ?>
-	
+
 						<?php
 							/* Include the Post-Format-specific template for the content.
 							 * If you want to overload this in a child theme then include a file
 							 * called loop-galleryfolder.php and that will be used instead.
-							 */							 
+							 */
 							ezg_get_template_part( 'content', 'galleryfolder' );
 						?>
-					<?php ezg_folders_break( ++$ezg_i ); ?>	
+					<?php ezg_folders_break( ++$ezg_i ); ?>
 					<?php endwhile; ?>
 					<br style="clear: both;"/>
 					<?php do_action( 'eazyest_gallery_end_of_gallery' ); ?>

@@ -19,7 +19,7 @@ get_header(); ?>
 
 				<article id="post-<?php the_ID(); ?>" <?php post_class( 'image-attachment' ); ?>>
 					<header class="entry-header">
-						<h1 class="entry-title"><?php the_title(); ?></h1>				
+						<h1 class="entry-title"><?php the_title(); ?></h1>
 
 						<nav id="image-navigation" class="navigation" role="navigation">
 							<span class="previous-image"><?php previous_image_link( false, __( '&larr; Previous', 'eazyest-gallery' ) ); ?></span>
@@ -57,18 +57,18 @@ else :
 	// or, if there's only 1 image, get the URL of the image
 	$next_attachment_url = wp_get_attachment_url();
 endif;
-						
+
 $ezg_doing_attachment = true;
 if ( 'default' != eazyest_gallery()->on_slide_click ) :
 	$next_attachment_url = wp_get_attachment_url();
 endif;
 
 $attachment_size = apply_filters( 'twentytwelve_attachment_size', array( 960, 960 ) );
-// we need to add popup markup	
+// we need to add popup markup
 $next_link = ezg_add_popup( '<a href="' . $next_attachment_url . '" title="' . the_title_attribute( 'echo=0' ) . '" rel="attachment">', $post->ID ) . wp_get_attachment_image( $post->ID, $attachment_size ) . '</a>';
 $ezg_doing_attachment = false;
 ?>
-								<?php	
+								<?php
 								echo $next_link;
 								?>
 								<?php if ( ! empty( $post->post_excerpt ) ) : ?>
@@ -79,13 +79,13 @@ $ezg_doing_attachment = false;
 							</div><!-- .attachment -->
 
 						</div><!-- .entry-attachment -->
-						
+
 						<div class="entry-description">
 							<?php the_content(); ?>
 							<?php wp_link_pages( array( 'before' => '<div class="page-links">' . __( 'Pages:', 'eazyest-gallery' ), 'after' => '</div>' ) ); ?>
 						</div><!-- .entry-description -->
 						<?php do_action( 'eazyest_gallery_after_attachment', $post->ID ); ?>
-						
+
 						<footer class="entry-meta">
 							<?php
 								$metadata = wp_get_attachment_metadata();
@@ -98,7 +98,7 @@ $ezg_doing_attachment = false;
 									esc_url( get_permalink( $post->post_parent ) ),
 									esc_attr( strip_tags( get_the_title( $post->post_parent ) ) ),
 									get_the_title( $post->post_parent )
-								);								
+								);
 							?>
 							<?php edit_post_link( __( 'Edit', 'eazyest-gallery' ), '<span class="edit-link">', '</span>' ); ?>
 						</footer><!-- .entry-meta -->

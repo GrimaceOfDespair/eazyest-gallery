@@ -88,18 +88,18 @@
 	}
 	if ( 'default' != eazyest_gallery()->on_slide_click ){
 		$next_attachment_url = wp_get_attachment_url();
-	}						
+	}
 	$ezg_doing_attachment = true;
 	$attachment_width  = apply_filters( 'twentyten_attachment_size',   900 );
 	$attachment_height = apply_filters( 'twentyten_attachment_height', 900 );
 	$attachment_size   = array( $attachment_width, $attachment_height );
 	// we need to add popup markup
-	$next_link = ezg_add_popup( '<a href="' . $next_attachment_url . '" title="' . the_title_attribute( 'echo=0' ) . '" rel="attachment">', $post->ID ) . wp_get_attachment_image( $post->ID, $attachment_size ) . '</a>'; 
+	$next_link = ezg_add_popup( '<a href="' . $next_attachment_url . '" title="' . the_title_attribute( 'echo=0' ) . '" rel="attachment">', $post->ID ) . wp_get_attachment_image( $post->ID, $attachment_size ) . '</a>';
 	$ezg_doing_attachment = false;
-		
+
 ?>
-						<p class="attachment"><?php		
-								echo $next_link; 
+						<p class="attachment"><?php
+								echo $next_link;
 								?></p>
 
 						<div id="nav-below" class="navigation">

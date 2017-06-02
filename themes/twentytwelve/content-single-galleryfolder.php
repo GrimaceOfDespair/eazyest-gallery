@@ -17,7 +17,7 @@
 				</div><!-- .comments-link -->
 			<?php endif; // comments_open() ?>
 		</header><!-- .entry-header -->
-		
+
 		<div class="entry-content eazyest-gallery">
 			<?php do_action( 'eazyest_gallery_before_folder_content', $post->ID ); // this action uis used for breadcrumb trail and for thumbnail images ?>
 			<?php the_content( __( 'Continue reading <span class="meta-nav">&rarr;</span>', 'eazyest-gallery' ) ); // this is the text content like a regular WordPress post ?>

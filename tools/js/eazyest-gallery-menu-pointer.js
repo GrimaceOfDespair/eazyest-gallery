@@ -1,6 +1,6 @@
 (function($) {
 	$(document).ready(function() {
-		
+
 		$('#menu-posts-galleryfolder').pointer({
 	  	content: eazyestUpgraderPointer.content,
 			 position: {'edge':'top'},
@@ -11,6 +11,6 @@
 				});
 			 }
 		}).pointer('open');
-			
+
 	});  // $(document).ready();
 })(jQuery)

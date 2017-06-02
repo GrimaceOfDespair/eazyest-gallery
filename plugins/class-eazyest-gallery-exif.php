@@ -1,12 +1,12 @@
 <?php
- 
+
 // Exit if accessed directly
-if ( !defined( 'ABSPATH' ) ) exit; 
+if ( !defined( 'ABSPATH' ) ) exit;
 
 /**
  * Eazyest_Gallery_Exif
  * Plugin to display Exif data for an attachment
- * 
+ *
  * @package Eazyest Gallery
  * @subpackage Plugins/Exif
  * @author Marcel Brinkkemper
@@ -16,22 +16,22 @@ if ( !defined( 'ABSPATH' ) ) exit;
  * @access public
  */
 class Eazyest_Gallery_Exif {
-	
+
 	/**
 	 * @staticvar object $instance
-	 */ 
+	 */
 	private static $instance;
-	
+
 	/**
 	 * Eazyest_Gallery_Exif::__construct()
-	 * 
+	 *
 	 * @return void
 	 */
 	function __construct(){}
-	
+
 	/**
 	 * Eazyest_Gallery_Exif::init()
-	 * 
+	 *
 	 * @access private
 	 * @return void
 	 */
@@ -39,27 +39,27 @@ class Eazyest_Gallery_Exif {
 		$this->actions();
 		$this->filters();
 	}
-	
+
 	/**
 	 * Eazyest_Gallery_Exif::instance()
-	 * 
+	 *
 	 * @return object Eazyest_Gallery_Exif
 	 */
 	public static function instance() {
 		// enable only when exif extension is loaded
 		if ( ! is_callable( 'exif_read_data' ) )
 			return null;
-			
+
 		if ( ! isset( self::$instance ) ) {
 			self::$instance = new Eazyest_Gallery_Exif;
 			self::$instance->init();
 		}
 		return self::$instance;
 	}
-	
+
 	/**
 	 * Eazyest_Gallery_Exif::actions()
-	 * 
+	 *
 	 * @since 0.1.0 (r70)
 	 * @uses add_action()
 	 * @return void
@@ -68,26 +68,26 @@ class Eazyest_Gallery_Exif {
 		// only add frontend actions when user has checked option
 		if ( eazyest_gallery()->enable_exif ) {
 			add_action( 'eazyest_gallery_after_attachment', array( $this, 'show_exif' ) );
-		}					
+		}
 		add_action( 'eazyest_gallery_before_rotation', 'ezg_get_exif' );
 	}
-	
+
 	/**
 	 * Eazyest_Gallery_Exif::filters()
-	 * 
+	 *
 	 * @since 0.1.0 (r2)
-	 * @uses add_filter() 
+	 * @uses add_filter()
 	 * @return void
 	 */
 	function filters() {
-		add_filter( 'eazyest_gallery_image_settings',  array( $this, 'exif_option' ) );	
+		add_filter( 'eazyest_gallery_image_settings',  array( $this, 'exif_option' ) );
 	}
-	
+
 	/**
 	 * Eazyest_Gallery_Exif::exif_option()
 	 * Add exif option to Eazyest Gallery settings screen.
 	 * @see Eazyest_Settings_Page::fields()
-	 * 
+	 *
 	 * @since 0.1.0 (r2)
 	 * @param array $options
 	 * @return array
@@ -99,11 +99,11 @@ class Eazyest_Gallery_Exif {
 		);
 		return $options;
 	}
-	
+
 	/**
 	 * Eazyest_Gallery_Exif::enable_exif()
 	 * Output settings screen row for anable exif option.
-	 * 
+	 *
 	 * @since 0.1.0 (r2)
 	 * @uses checked() to set checkbox input
 	 * @return void
@@ -115,14 +115,14 @@ class Eazyest_Gallery_Exif {
 		<label for="enable_exif"><?php _e( 'Show Exif information on the attachment page', 'eazyest-gallery' ) ?> </label>
 		<?php
 	}
-	
+
 	// exif administration functions ---------------------------------------------
-	
+
 	/**
 	 * Eazyest_Gallery_Exif::get_exif_data()
 	 * Read Exif data from image file.
 	 * For Eazyest Gallery images, store Exif data as postmeta record to preserve data when original file gets changed.
-	 * 
+	 *
 	 * @since 0.2.0 (r324)
 	 * @access public
 	 * @uses get_post_meta() to read exif from wpdb
@@ -132,30 +132,30 @@ class Eazyest_Gallery_Exif {
 	 * @return array exif data extracted from image
 	 */
 	public function get_exif_data( $attachment_id ) {
-		
+
 		$exif = get_post_meta( $attachment_id, '_eazyest_exif_data', true );
-		
+
 		if ( ! empty( $exif ) )
 			return $exif;
-		
+
 		$exif = array();
 		$attached_file = get_attached_file( $attachment_id );
 		if ( $exif = @read_exif_data( $attached_file ) ) {
-			
+
 			// extra field of compiled GPS data for use with Google Maps
 			$exif['gps']       = $this->get_geodata( $attachment_id, $exif );
-			
+
 			// store postmeta if image is in Eazyest Gallery
 			if ( eazyest_folderbase()->is_gallery_image( $attachment_id ) )
-				update_post_meta( $attachment_id,  '_eazyest_exif_data', $exif );	
+				update_post_meta( $attachment_id,  '_eazyest_exif_data', $exif );
 		}
-		return $exif;	
+		return $exif;
 	}
-	
+
 	/**
 	 * Eazyest_Gallery_Exif::get_geodata()
 	 * Get compiled GPS data from Exif for use in Google Maps
-	 * 
+	 *
 	 * @since 0.2.0 (r324)
 	 * @access public
 	 * @param int $attachment_id
@@ -171,7 +171,7 @@ class Eazyest_Gallery_Exif {
 		}
 		if ( isset( $exif['gps'] ) )
 			return $exif['gps'];
-			
+
 		$geodata = '';
 		$gps= array();
 		if ( !empty( $exif['GPSLatitude'] ) ) {
@@ -181,117 +181,117 @@ class Eazyest_Gallery_Exif {
 			$gps['longitude_hour']   = $exif['GPSLongitude'][0];
 			$gps['longitude_minute'] = $exif['GPSLongitude'][1];
 			$gps['longitude_second'] = $exif['GPSLongitude'][2];
-			
+
 			foreach( $gps as $key => $value ) {
 				$pos = strpos( $value, '/' );
-				if( $pos !== false ) { 
-					$temp = explode( '/',$value ); 
+				if( $pos !== false ) {
+					$temp = explode( '/',$value );
 					$gps[$key] = $temp[0] / $temp[1];
 				}
 			}
-			
+
 			$latitude = round( $gps['latitude_hour'] + ( $gps['latitude_minute'] / 60 ) + ( $gps['latitude_second'] / 3600 ), 5 );
 			$latitude = $exif['GPSLatitudeRef'] == "S" ? -1 * $latitude : $latitude;
-			
+
 			$longitude = round( $gps['longitude_hour'] + ( $gps['longitude_minute'] / 60 ) + ( $gps['longitude_second'] / 3600 ), 5 );
-			$longitude = ( $exif['GPSLongitudeRef'] == "W" ) ? -1 * $longitude : $longitude; 
-			
+			$longitude = ( $exif['GPSLongitudeRef'] == "W" ) ? -1 * $longitude : $longitude;
+
 			$geodata = $latitude . ',' . $longitude;
-		}	
-		return $geodata;		
+		}
+		return $geodata;
 	}
-	
+
 	// exif output functions -----------------------------------------------------
-	
+
 	/**
 	 * Eazyest_Gallery_Exif::imgtype()
 	 * Returns array of exif image types strings.
-	 * 
+	 *
 	 * @since 0.1.0 (r71)
 	 * @access protected
 	 * @return array
 	 */
 	protected function imgtype() {
-		return array( 
-			'', 
-			_x( 'GIF',                       'exif imgtype', 'eazyest-gallery' ), 
-			_x( 'JPG',                       'exif imgtype', 'eazyest-gallery' ), 
-			_x( 'PNG',                       'exif imgtype', 'eazyest-gallery' ), 
-			_x( 'SWF',                       'exif imgtype', 'eazyest-gallery' ), 
-			_x( 'PSD',                       'exif imgtype', 'eazyest-gallery' ), 
-			_x( 'BMP',                       'exif imgtype', 'eazyest-gallery' ), 
-			_x( 'TIFF(intel byte order)',    'exif imgtype', 'eazyest-gallery' ), 
-			_x( 'TIFF(motorola byte order)', 'exif imgtype', 'eazyest-gallery' ), 
-			_x( 'JPC',                       'exif imgtype', 'eazyest-gallery' ), 
-			_x( 'JP2',                       'exif imgtype', 'eazyest-gallery' ), 
-			_x( 'JPX',                       'exif imgtype', 'eazyest-gallery' ), 
-			_x( 'JB2',                       'exif imgtype', 'eazyest-gallery' ), 
-			_x( 'SWC',                       'exif imgtype', 'eazyest-gallery' ), 
-			_x( 'IFF',                       'exif imgtype', 'eazyest-gallery' ), 
-			_x( 'WBMP',                      'exif imgtype', 'eazyest-gallery' ), 
+		return array(
+			'',
+			_x( 'GIF',                       'exif imgtype', 'eazyest-gallery' ),
+			_x( 'JPG',                       'exif imgtype', 'eazyest-gallery' ),
+			_x( 'PNG',                       'exif imgtype', 'eazyest-gallery' ),
+			_x( 'SWF',                       'exif imgtype', 'eazyest-gallery' ),
+			_x( 'PSD',                       'exif imgtype', 'eazyest-gallery' ),
+			_x( 'BMP',                       'exif imgtype', 'eazyest-gallery' ),
+			_x( 'TIFF(intel byte order)',    'exif imgtype', 'eazyest-gallery' ),
+			_x( 'TIFF(motorola byte order)', 'exif imgtype', 'eazyest-gallery' ),
+			_x( 'JPC',                       'exif imgtype', 'eazyest-gallery' ),
+			_x( 'JP2',                       'exif imgtype', 'eazyest-gallery' ),
+			_x( 'JPX',                       'exif imgtype', 'eazyest-gallery' ),
+			_x( 'JB2',                       'exif imgtype', 'eazyest-gallery' ),
+			_x( 'SWC',                       'exif imgtype', 'eazyest-gallery' ),
+			_x( 'IFF',                       'exif imgtype', 'eazyest-gallery' ),
+			_x( 'WBMP',                      'exif imgtype', 'eazyest-gallery' ),
 			_x( 'XBM',                       'exif imgtype', 'eazyest-gallery' ),
 		);
 	}
-	
+
 	/**
 	 * Eazyest_Gallery_Exif::orientation()
 	 * Returns array of exif orientation strings.
-	 * 
+	 *
 	 * @since 0.1.0 (r71)
 	 * @access protected
 	 * @return array
 	 */
 	protected function orientation() {
-		return array( 
-			'', 
-			_x( 'top left side',     'exif orientation', 'eazyest-gallery' ), 
-			_x( 'top right side',    'exif orientation', 'eazyest-gallery' ), 
-			_x( 'bottom right side', 'exif orientation', 'eazyest-gallery' ), 
-			_x( 'bottom left side',  'exif orientation', 'eazyest-gallery' ), 
-			_x( 'left side top',     'exif orientation', 'eazyest-gallery' ), 
-			_x( 'right side top',    'exif orientation', 'eazyest-gallery' ), 
-			_x( 'right side bottom', 'exif orientation', 'eazyest-gallery' ), 
+		return array(
+			'',
+			_x( 'top left side',     'exif orientation', 'eazyest-gallery' ),
+			_x( 'top right side',    'exif orientation', 'eazyest-gallery' ),
+			_x( 'bottom right side', 'exif orientation', 'eazyest-gallery' ),
+			_x( 'bottom left side',  'exif orientation', 'eazyest-gallery' ),
+			_x( 'left side top',     'exif orientation', 'eazyest-gallery' ),
+			_x( 'right side top',    'exif orientation', 'eazyest-gallery' ),
+			_x( 'right side bottom', 'exif orientation', 'eazyest-gallery' ),
 			_x( 'left side bottom',  'exif orientation', 'eazyest-gallery' ),
 		);
 	}
-	
+
 	/**
 	 * Eazyest_Gallery_Exif::resolution_unit()
 	 * Returns array of exif resolution unit strings.
-	 * 
+	 *
 	 * @since 0.1.0 (r71)
 	 * @access protected
 	 * @return array
 	 */
 	protected function resolution_unit() {
 		return array(
-			'', 
-			'', 
-			_x( 'inches',      'exif resolution unit', 'eazyest-gallery' ), 
+			'',
+			'',
+			_x( 'inches',      'exif resolution unit', 'eazyest-gallery' ),
 			_x( 'centimeters', 'exif resolution unit', 'eazyest-gallery' ),
 		);
 	}
-	
+
 	/**
 	 * Eazyest_Gallery_Exif::ycbcr_positioning()
 	 * Returns array of exif ycbcr positioning strings.
-	 * 
+	 *
 	 * @since 0.1.0 (r71)
 	 * @access protected
 	 * @return array
 	 */
 	protected function ycbcr_positioning() {
 		return array(
-			'', 
-			_x( 'the center of pixel array', 'exif ycbr positioning', 'eazyest-gallery' ), 
+			'',
+			_x( 'the center of pixel array', 'exif ycbr positioning', 'eazyest-gallery' ),
 			_x( 'the datum point',           'exif ycbr positioning', 'eazyest-gallery' ),
 		);
 	}
-	
+
 	/**
 	 * Eazyest_Gallery_Exif::exposure_program()
 	 * Returns array of exif exposure program strings.
-	 * 
+	 *
 	 * @since 0.1.0 (r71)
 	 * @access protected
 	 * @return array
@@ -299,21 +299,21 @@ class Eazyest_Gallery_Exif {
 	protected function exposure_program() {
 		return array(
       _x( 'Not defined',                                                         'exif exposure program', 'eazyest-gallery' ),
-      _x( 'Manual',                                                              'exif exposure program', 'eazyest-gallery' ), 
-      _x( 'Normal program',                                                      'exif exposure program', 'eazyest-gallery' ), 
-      _x( 'Aperture priority',                                                   'exif exposure program', 'eazyest-gallery' ), 
-      _x( 'Shutter priority',                                                    'exif exposure program', 'eazyest-gallery' ), 
-      _x( 'Creative program (biased toward depth of field)',                     'exif exposure program', 'eazyest-gallery' ), 
-      _x( 'Action program (biased toward fast shutter speed)',                   'exif exposure program', 'eazyest-gallery' ), 
-      _x( 'Portrait mode (for closeup photos with the background out of focus)', 'exif exposure program', 'eazyest-gallery' ), 
+      _x( 'Manual',                                                              'exif exposure program', 'eazyest-gallery' ),
+      _x( 'Normal program',                                                      'exif exposure program', 'eazyest-gallery' ),
+      _x( 'Aperture priority',                                                   'exif exposure program', 'eazyest-gallery' ),
+      _x( 'Shutter priority',                                                    'exif exposure program', 'eazyest-gallery' ),
+      _x( 'Creative program (biased toward depth of field)',                     'exif exposure program', 'eazyest-gallery' ),
+      _x( 'Action program (biased toward fast shutter speed)',                   'exif exposure program', 'eazyest-gallery' ),
+      _x( 'Portrait mode (for closeup photos with the background out of focus)', 'exif exposure program', 'eazyest-gallery' ),
       _x( 'Landscape mode (for landscape photos with the background in focus)',  'exif exposure program', 'eazyest-gallery' ),
     );
 	}
-	
+
 	/**
 	 * Eazyest_Gallery_Exif::metering_mode()
 	 * Returns array of exif metering mode strings.
-	 * 
+	 *
 	 * @since 0.1.0 (r71)
 	 * @access protected
 	 * @return array
@@ -330,11 +330,11 @@ class Eazyest_Gallery_Exif {
       '255' => _x( 'Other Metering Mode',     'exif metering mode', 'eazyest-gallery' ),
     );
 	}
-	
+
 	/**
 	 * Eazyest_Gallery_Exif::light_source()
 	 * Returns array of exif light source strings.
-	 * 
+	 *
 	 * @since 0.1.0 (r71)
 	 * @access protected
 	 * @return array
@@ -363,11 +363,11 @@ class Eazyest_Gallery_Exif {
       '255' => _x( 'other light source',                      'exif light source', 'eazyest-gallery' ),
     );
 	}
-	
+
 	/**
 	 * Eazyest_Gallery_Exif::flash()
 	 * Returns array of exif flash strings.
-	 * 
+	 *
 	 * @since 0.1.0 (r71)
 	 * @access protected
 	 * @return array
@@ -397,12 +397,12 @@ class Eazyest_Gallery_Exif {
       '93' => _x( 'Flash fired, auto mode, return light not detected, red-eye reduction mode',             'exif flash', 'eazyest-gallery' ),
       '95' => _x( 'Flash fired, auto mode, return light detected, red-eye reduction mode',                 'exif flash', 'eazyest-gallery' ),
     );
-	}	
-	
+	}
+
 	/**
 	 * Eazyest_Gallery_Exif::_photo_getval()
 	 * Get exif string value from array of strings.
-	 * 
+	 *
 	 * @since 0.1.0 (r71)
 	 * @access private
 	 * @param string $image_info
@@ -419,193 +419,193 @@ class Eazyest_Gallery_Exif {
     }
     return $info_val;
   }
-	
+
 	/**
 	 * Eazyest_Gallery_Exif::show_exif()
 	 * Show exif data div below image.
 	 * div is hidden on display, shows on user click.
-	 * 
+	 *
 	 * @since 0.1.0 (r71)
-	 * @uses get_post() to get attachment properties 
+	 * @uses get_post() to get attachment properties
 	 * @param int $post_id for currently showing attachment
 	 * @return void
 	 */
 	function show_exif( $post_id ) {
-		
+
 		$imgtype           = $this->imgtype();
     $orientation       = $this->orientation();
     $resolution_unit   = $this->resolution_unit();
-    $ycbcr_positioning = $this->ycbcr_positioning();    
-    $exposure_program  = $this->exposure_program();    
-    $metering_mode     = $this->metering_mode();     
-    $light_source      = $this->light_source();     
-    $flash             = $this->flash(); 
-    
+    $ycbcr_positioning = $this->ycbcr_positioning();
+    $exposure_program  = $this->exposure_program();
+    $metering_mode     = $this->metering_mode();
+    $light_source      = $this->light_source();
+    $flash             = $this->flash();
+
     $exif = ezg_get_exif( $post_id );
-			 
-		if ( $exif ) { 
+
+		if ( $exif ) {
 	    $img_info = array ();
-	    if ( isset( $exif['FILE']['FileName'] ) ) 
+	    if ( isset( $exif['FILE']['FileName'] ) )
 	      $img_info[_x( 'File Name', 'exif info', 'eazyest-gallery' )] = $exif['FILE']['FileName'];
-				  
-	    if ( isset( $exif['FILE']['FileType'] ) )   
+
+	    if ( isset( $exif['FILE']['FileType'] ) )
 	      $img_info[_x( 'File Type', 'exif info', 'eazyest-gallery' )] =  $imgtype[$exif['FILE']['FileType']];
-	      
-	    if ( isset( $exif['FILE']['MimeType'] ) ) 
-	      $img_info[_x( 'Mime Type', 'exif info', 'eazyest-gallery' )] =  $exif['FILE']['MimeType']; 
-	      
-	    if ( isset( $exif['FILE']['FileSize'] ) ) 
+
+	    if ( isset( $exif['FILE']['MimeType'] ) )
+	      $img_info[_x( 'Mime Type', 'exif info', 'eazyest-gallery' )] =  $exif['FILE']['MimeType'];
+
+	    if ( isset( $exif['FILE']['FileSize'] ) )
 	      $img_info[_x( 'File Size', 'exif info', 'eazyest-gallery' )] = ( floor( $exif['FILE']['FileSize'] / 1024 * 10 ) /10 ) . 'KB';
-	      
-	    if ( isset( $exif['FILE']['FileDateTime'] ) )       
+
+	    if ( isset( $exif['FILE']['FileDateTime'] ) )
 	      $img_info[_x( 'File Date/Time', 'exif info', 'eazyest-gallery' )] = date( 'Y-m-d  H:i:s', $exif['FILE']['FileDateTime'] );
-	      
-	    if ( isset( $exif['IFD0']['Artist'] ) ) 
-	      $img_info[_x( 'Artist', 'exif info', 'eazyest-gallery' )] = $exif['IFD0']['Artist']; 
-	      
+
+	    if ( isset( $exif['IFD0']['Artist'] ) )
+	      $img_info[_x( 'Artist', 'exif info', 'eazyest-gallery' )] = $exif['IFD0']['Artist'];
+
 	    if ( isset( $exif['IFD0']['Make'] ) )
-	      $img_info[_x( 'Make', 'exif info', 'eazyest-gallery' )] = $exif['IFD0']['Make']; 
-	      
+	      $img_info[_x( 'Make', 'exif info', 'eazyest-gallery' )] = $exif['IFD0']['Make'];
+
 	    if ( isset( $exif['IFD0']['Model'] ) )
-	      $img_info[_x( 'Model', 'exif info', 'eazyest-gallery' )] = $exif['IFD0']['Model']; 
-	      
-	    if ( isset( $exif['IFD0']['DateTime'] ) ) 
+	      $img_info[_x( 'Model', 'exif info', 'eazyest-gallery' )] = $exif['IFD0']['Model'];
+
+	    if ( isset( $exif['IFD0']['DateTime'] ) )
 	      $img_info[_x( 'Date/Time', 'exif info', 'eazyest-gallery' )] = $exif['IFD0']['DateTime'];
-				 
-	    if ( isset( $exif['EXIF']['ExifVersion'] ) ) 
-	      $img_info[_x( 'Exif Version', 'exif info', 'eazyest-gallery' )] = $exif['EXIF']['ExifVersion'];  
-	      
-	    if ( isset( $exif['EXIF']['DateTimeOriginal'] ) ) 
-	      $img_info[_x( 'Date/Time Original', 'exif info', 'eazyest-gallery' )] = $exif['EXIF']['DateTimeOriginal']; 
-	      
-	    if ( isset( $exif['EXIF']['DateTimeDigitized'] ) ) 
-	      $img_info[_x( 'Date/Time Digitized', 'exif info', 'eazyest-gallery' )] = $exif['EXIF']['DateTimeDigitized']; 
-	      
-	    if ( isset( $exif['COMPUTED']['Height'] ) ) 
-	      $img_info[_x( 'Height', 'exif info', 'eazyest-gallery' )] = $exif['COMPUTED']['Height'] . 'px'; 
-	      
-	    if ( isset( $exif['COMPUTED']['Width'] ) ) 
-	      $img_info[_x( 'Width', 'exif info', 'eazyest-gallery' )] = $exif['COMPUTED']['Width'] . 'px'; 
-	      
-	    if ( isset( $exif['EXIF']['CompressedBitsPerPixel'] ) ) 
+
+	    if ( isset( $exif['EXIF']['ExifVersion'] ) )
+	      $img_info[_x( 'Exif Version', 'exif info', 'eazyest-gallery' )] = $exif['EXIF']['ExifVersion'];
+
+	    if ( isset( $exif['EXIF']['DateTimeOriginal'] ) )
+	      $img_info[_x( 'Date/Time Original', 'exif info', 'eazyest-gallery' )] = $exif['EXIF']['DateTimeOriginal'];
+
+	    if ( isset( $exif['EXIF']['DateTimeDigitized'] ) )
+	      $img_info[_x( 'Date/Time Digitized', 'exif info', 'eazyest-gallery' )] = $exif['EXIF']['DateTimeDigitized'];
+
+	    if ( isset( $exif['COMPUTED']['Height'] ) )
+	      $img_info[_x( 'Height', 'exif info', 'eazyest-gallery' )] = $exif['COMPUTED']['Height'] . 'px';
+
+	    if ( isset( $exif['COMPUTED']['Width'] ) )
+	      $img_info[_x( 'Width', 'exif info', 'eazyest-gallery' )] = $exif['COMPUTED']['Width'] . 'px';
+
+	    if ( isset( $exif['EXIF']['CompressedBitsPerPixel'] ) )
 	      $img_info[_x( 'Compressed Bits Per Pixel', 'exif info', 'eazyest-gallery' )] = sprintf( _x( '%s Bits/Pixel', 'exif info', 'eazyest-gallery' ), $exif['EXIF']['CompressedBitsPerPixel'] );
-	      
+
 	    $img_info[_x( 'Focus Distance', 'exif info', 'eazyest-gallery' )] = isset( $exif['COMPUTED']['FocusDistance'] ) ? sprintf(  _x( '%s m', 'length meter', 'eazyest-gallery' ), $exif['COMPUTED']['FocusDistance'] ) : NULL;
-	    
+
 	    $img_info[_x( 'Focal Length', 'exif info', 'eazyest-gallery' )] = isset( $exif['EXIF']['FocalLength'] ) ? sprintf( _x( '%s mm', 'length milimeter', 'eazyest-gallery' ), $exif['EXIF']['FocalLength'] ) : NULL;
-			 
+
 	    $img_info[_x( 'FocalLength In 35mm Film', 'exif info', 'eazyest-gallery' )] = isset( $exif['EXIF']['FocalLengthIn35mmFilm'] ) ? sprintf( _x( '%s mm', 'length milimeter', 'eazyest-gallery' ), $exif['EXIF']['FocalLengthIn35mmFilm'] ) : NULL;
-			 
-	    if ( isset( $exif['EXIF']['ColorSpace'] ) ) 
+
+	    if ( isset( $exif['EXIF']['ColorSpace'] ) )
 	      $img_info[_x( 'Color Space', 'exif info', 'eazyest-gallery' )] = $exif['EXIF']['ColorSpace'] == 1 ? _x( 'sRGB', 'exif info', 'eazyest-gallery' ) :  _x( 'Uncalibrated', 'exif info', 'eazyest-gallery' );
-	      
-	    if ( isset( $exif['IFD0']['ImageDescription'] ) ) 
-	      $img_info[_x( 'Image Description', 'exif info', 'eazyest-gallery' )] = $exif['IFD0']['ImageDescription']; 
-	      
-	    if ( isset( $exif['IFD0']['Orientation'] ) ) 
-	      $img_info[_x( 'Orientation', 'exif info', 'eazyest-gallery' )] = $orientation[$exif['IFD0']['Orientation']]; 
-	      
-	    if ( isset( $exif['IFD0']['XResolution'] ) ) 
+
+	    if ( isset( $exif['IFD0']['ImageDescription'] ) )
+	      $img_info[_x( 'Image Description', 'exif info', 'eazyest-gallery' )] = $exif['IFD0']['ImageDescription'];
+
+	    if ( isset( $exif['IFD0']['Orientation'] ) )
+	      $img_info[_x( 'Orientation', 'exif info', 'eazyest-gallery' )] = $orientation[$exif['IFD0']['Orientation']];
+
+	    if ( isset( $exif['IFD0']['XResolution'] ) )
 	    	                                                                // translators: resolution, unit
 	      $img_info[_x( 'X Resolution', 'exif info', 'eazyest-gallery' )] = sprintf( __( '%s%s', 'eazyest-gallery' ), $exif['IFD0']['XResolution'], $resolution_unit[$exif['IFD0']['ResolutionUnit']] );
-				 
-	    if ( isset( $exif['IFD0']['YResolution'] ) ) 
+
+	    if ( isset( $exif['IFD0']['YResolution'] ) )
 	    	                                                                // translators: resolution, unit
 	      $img_info[_x( 'Y Resolution', 'exif info', 'eazyest-gallery' )] = sprintf( __( '%s%s', 'eazyest-gallery' ), $exif['IFD0']['YResolution'], $resolution_unit[$exif['IFD0']['ResolutionUnit']] );
-				 
-	    if ( isset( $exif['IFD0']['Software'] ) ) 
+
+	    if ( isset( $exif['IFD0']['Software'] ) )
 	      $img_info[_x( 'Software', 'exif info', 'eazyest-gallery' )] = utf8_encode( $exif['IFD0']['Software'] );
-				 
-	    if ( isset( $exif['IFD0']['YCbCrPositioning'] ) ) 
-	      $img_info[_x( 'YCbCr Positioning', 'exif info', 'eazyest-gallery' )] = $ycbcr_positioning[$exif['IFD0']['YCbCrPositioning']]; 
-	      
-	    if ( isset( $exif['IFD0']['Copyright'] ) ) 
-	      $img_info[_x( 'Copyright', 'exif info', 'eazyest-gallery' )] = $exif['IFD0']['Copyright'];  
-	      
+
+	    if ( isset( $exif['IFD0']['YCbCrPositioning'] ) )
+	      $img_info[_x( 'YCbCr Positioning', 'exif info', 'eazyest-gallery' )] = $ycbcr_positioning[$exif['IFD0']['YCbCrPositioning']];
+
+	    if ( isset( $exif['IFD0']['Copyright'] ) )
+	      $img_info[_x( 'Copyright', 'exif info', 'eazyest-gallery' )] = $exif['IFD0']['Copyright'];
+
 	    if ( isset( $exif['COMPUTED']['Copyright.Photographer'] ) )
 	      $img_info[_x( 'Photographer', 'exif info', 'eazyest-gallery' )] = $exif['COMPUTED']['Copyright.Photographer'];
-				 
-	    if ( isset( $exif['COMPUTED']['Copyright.Editor'] ) ) 
+
+	    if ( isset( $exif['COMPUTED']['Copyright.Editor'] ) )
 	      $img_info[_x( 'Editor', 'exif info', 'eazyest-gallery' )] = $exif['COMPUTED']['Copyright.Editor'];
-	      
-	    if ( isset( $exif['EXIF']['ExifVersion'] ) ) 
-	      $img_info[_x( 'Exif Version', 'exif info', 'eazyest-gallery' )] = $exif['EXIF']['ExifVersion']; 
-	      
-	    if ( isset( $exif['EXIF']['FlashPixVersion'] ) ) 
+
+	    if ( isset( $exif['EXIF']['ExifVersion'] ) )
+	      $img_info[_x( 'Exif Version', 'exif info', 'eazyest-gallery' )] = $exif['EXIF']['ExifVersion'];
+
+	    if ( isset( $exif['EXIF']['FlashPixVersion'] ) )
 				                                                                    // translators: Flashpix version
-	      $img_info[_x( 'Flashpix Version', 'exif info', 'eazyest-gallery' )] = sprintf( _x( 'Version %s', 'exif info', 'eazyest-gallery' ), number_format( $exif['EXIF']['FlashPixVersion']/100, 2 ) );    
-	      
-	    if ( isset( $exif['EXIF']['ApertureValue'] ) ) 
-	      $img_info[_x( 'Aperture Value', 'exif info', 'eazyest-gallery' )] = $exif['EXIF']['ApertureValue']; 
-	      
-	    if ( isset( $exif['EXIF']['ShutterSpeedValue'] ) ) 
-	      $img_info[_x( 'Shutter Speed Value', 'exif info', 'eazyest-gallery' )] = $exif['EXIF']['ShutterSpeedValue']; 
-	      
-	    if ( isset( $exif['COMPUTED']['ApertureFNumber'] ) ) 
-	      $img_info[_x( 'Aperture F-Number', 'exif info', 'eazyest-gallery' )] = $exif['COMPUTED']['ApertureFNumber']; 
-	      
-	    if ( isset( $exif['EXIF']['MaxApertureValue'] ) ) 
-	      $img_info[_x( 'Max Aperture Value', 'exif info', 'eazyest-gallery' )] = 'F' . $exif['EXIF']['MaxApertureValue']; 
-	      
-	    if ( isset( $exif['EXIF']['ExposureTime'] ) ) 
-	      $img_info[_x( 'Exposure Time', 'exif info', 'eazyest-gallery' )] = $exif['EXIF']['ExposureTime']; 
-	      
-	    if ( isset( $exif['EXIF']['FNumber'] ) ) 
-	      $img_info[_x( 'F-Number', 'exif info', 'eazyest-gallery' )] = $exif['EXIF']['FNumber']; 
-	      
-	    if ( isset( $exif['EXIF']['MeteringMode'] ) ) 
-	      $img_info[_x( 'Metering Mode', 'exif info', 'eazyest-gallery' )] = $this->_photo_getval( $exif['EXIF']['MeteringMode'], $metering_mode ); 
-	      
-	    if ( isset( $exif['EXIF']['LightSource'] ) ) 
-	      $img_info[_x( 'Light Source', 'exif info', 'eazyest-gallery' )] = $this->_photo_getval( $exif['EXIF']['LightSource'], $light_source ); 
-	      
-	    if ( isset( $exif['EXIF']['Flash'] ) ) 
-	      $img_info[_x( 'Flash', 'exif info', 'eazyest-gallery' )] = $this->_photo_getval( $exif['EXIF']['Flash'], $flash ); 
-	      
-	    if ( isset( $exif['EXIF']['ExposureMode'] ) ) 
+	      $img_info[_x( 'Flashpix Version', 'exif info', 'eazyest-gallery' )] = sprintf( _x( 'Version %s', 'exif info', 'eazyest-gallery' ), number_format( $exif['EXIF']['FlashPixVersion']/100, 2 ) );
+
+	    if ( isset( $exif['EXIF']['ApertureValue'] ) )
+	      $img_info[_x( 'Aperture Value', 'exif info', 'eazyest-gallery' )] = $exif['EXIF']['ApertureValue'];
+
+	    if ( isset( $exif['EXIF']['ShutterSpeedValue'] ) )
+	      $img_info[_x( 'Shutter Speed Value', 'exif info', 'eazyest-gallery' )] = $exif['EXIF']['ShutterSpeedValue'];
+
+	    if ( isset( $exif['COMPUTED']['ApertureFNumber'] ) )
+	      $img_info[_x( 'Aperture F-Number', 'exif info', 'eazyest-gallery' )] = $exif['COMPUTED']['ApertureFNumber'];
+
+	    if ( isset( $exif['EXIF']['MaxApertureValue'] ) )
+	      $img_info[_x( 'Max Aperture Value', 'exif info', 'eazyest-gallery' )] = 'F' . $exif['EXIF']['MaxApertureValue'];
+
+	    if ( isset( $exif['EXIF']['ExposureTime'] ) )
+	      $img_info[_x( 'Exposure Time', 'exif info', 'eazyest-gallery' )] = $exif['EXIF']['ExposureTime'];
+
+	    if ( isset( $exif['EXIF']['FNumber'] ) )
+	      $img_info[_x( 'F-Number', 'exif info', 'eazyest-gallery' )] = $exif['EXIF']['FNumber'];
+
+	    if ( isset( $exif['EXIF']['MeteringMode'] ) )
+	      $img_info[_x( 'Metering Mode', 'exif info', 'eazyest-gallery' )] = $this->_photo_getval( $exif['EXIF']['MeteringMode'], $metering_mode );
+
+	    if ( isset( $exif['EXIF']['LightSource'] ) )
+	      $img_info[_x( 'Light Source', 'exif info', 'eazyest-gallery' )] = $this->_photo_getval( $exif['EXIF']['LightSource'], $light_source );
+
+	    if ( isset( $exif['EXIF']['Flash'] ) )
+	      $img_info[_x( 'Flash', 'exif info', 'eazyest-gallery' )] = $this->_photo_getval( $exif['EXIF']['Flash'], $flash );
+
+	    if ( isset( $exif['EXIF']['ExposureMode'] ) )
 	      $img_info[_x( 'Exposure Mode', 'exif info', 'eazyest-gallery' )] = $exif['EXIF']['ExposureMode'] == 1 ? _x( 'Manual exposure', 'exif info', 'eazyest-gallery' ) : _x( 'Auto exposure', 'exif info', 'eazyest-gallery' );
-				 
-	    if ( isset( $exif['EXIF']['WhiteBalance'] ) ) 
+
+	    if ( isset( $exif['EXIF']['WhiteBalance'] ) )
 	      $img_info[_x( 'White Balance', 'exif info', 'eazyest-gallery' )] = $exif['EXIF']['WhiteBalance'] == 1 ?  _x( 'Manual white balance', 'exif info', 'eazyest-gallery'  ) :  _x( 'Auto white balance', 'exif info', 'eazyest-gallery'  );
-				 
-	    if ( isset( $exif['EXIF']['ExposureProgram'] ) ) 
-	      $img_info[_x( 'Exposure Program', 'exif info', 'eazyest-gallery' )] = $exposure_program[$exif['EXIF']['ExposureProgram']]; 
-	      
-	    if ( isset( $exif['EXIF']['ExposureBiasValue'] ) ) 
+
+	    if ( isset( $exif['EXIF']['ExposureProgram'] ) )
+	      $img_info[_x( 'Exposure Program', 'exif info', 'eazyest-gallery' )] = $exposure_program[$exif['EXIF']['ExposureProgram']];
+
+	    if ( isset( $exif['EXIF']['ExposureBiasValue'] ) )
 	    	                                                                       // translators: exposure bias value
-	      $img_info[_x( 'Exposure Bias Value', 'exif info', 'eazyest-gallery' )] = sprintf( _x( ' %sEV', 'exif info', 'eazyest-gallery' ), $exif['EXIF']['ExposureBiasValue'] ); 
-	      
-	    if ( isset( $exif['EXIF']['ISOSpeedRatings'] ) ) 
-	      $img_info[_x( 'ISO Speed Ratings', 'exif info', 'eazyest-gallery' )] = $exif['EXIF']['ISOSpeedRatings']; 
-	      
-	    if ( isset( $exif['EXIF']['ComponentsConfiguration'] ) ) 
-	      $img_info[_x( 'Components Configuration', 'exif info', 'eazyest-gallery' )] = bin2hex( $exif['EXIF']['ComponentsConfiguration'] ) == '01020300' ? _x( 'YCbCr', 'exif info', 'eazyest-gallery' ) : _x( 'RGB', 'exif info', 'eazyest-gallery' );    
-				  
-	    if ( isset( $exif['COMPUTED']['UserCommentEncoding'] ) ) 
-	      $img_info[_x( 'User Comment Encoding', 'exif info', 'eazyest-gallery' )] = $exif['COMPUTED']['UserCommentEncoding']; 
-	      
-	    if ( isset( $exif['COMPUTED']['UserComment'] ) ) 
-	      $img_info[_x( 'User Comment', 'exif info', 'eazyest-gallery' )] = $exif['COMPUTED']['UserComment'];    
-				  
-	    if ( isset( $exif['EXIF']['ExifImageLength'] ) ) 
-	      $img_info[_x( 'Exif Image Length', 'exif info', 'eazyest-gallery' )] = $exif['EXIF']['ExifImageLength']; 
-	      
-	    if ( isset( $exif['EXIF']['ExifImageWidth'] ) ) 
-	      $img_info[_x( 'Exif Image Width', 'exif info', 'eazyest-gallery' )] = $exif['EXIF']['ExifImageWidth']; 
-	      
-	    if ( isset( $exif['EXIF']['FileSource'] ) ) 
+	      $img_info[_x( 'Exposure Bias Value', 'exif info', 'eazyest-gallery' )] = sprintf( _x( ' %sEV', 'exif info', 'eazyest-gallery' ), $exif['EXIF']['ExposureBiasValue'] );
+
+	    if ( isset( $exif['EXIF']['ISOSpeedRatings'] ) )
+	      $img_info[_x( 'ISO Speed Ratings', 'exif info', 'eazyest-gallery' )] = $exif['EXIF']['ISOSpeedRatings'];
+
+	    if ( isset( $exif['EXIF']['ComponentsConfiguration'] ) )
+	      $img_info[_x( 'Components Configuration', 'exif info', 'eazyest-gallery' )] = bin2hex( $exif['EXIF']['ComponentsConfiguration'] ) == '01020300' ? _x( 'YCbCr', 'exif info', 'eazyest-gallery' ) : _x( 'RGB', 'exif info', 'eazyest-gallery' );
+
+	    if ( isset( $exif['COMPUTED']['UserCommentEncoding'] ) )
+	      $img_info[_x( 'User Comment Encoding', 'exif info', 'eazyest-gallery' )] = $exif['COMPUTED']['UserCommentEncoding'];
+
+	    if ( isset( $exif['COMPUTED']['UserComment'] ) )
+	      $img_info[_x( 'User Comment', 'exif info', 'eazyest-gallery' )] = $exif['COMPUTED']['UserComment'];
+
+	    if ( isset( $exif['EXIF']['ExifImageLength'] ) )
+	      $img_info[_x( 'Exif Image Length', 'exif info', 'eazyest-gallery' )] = $exif['EXIF']['ExifImageLength'];
+
+	    if ( isset( $exif['EXIF']['ExifImageWidth'] ) )
+	      $img_info[_x( 'Exif Image Width', 'exif info', 'eazyest-gallery' )] = $exif['EXIF']['ExifImageWidth'];
+
+	    if ( isset( $exif['EXIF']['FileSource'] ) )
 	      $img_info[_x( 'File Source', 'exif info', 'eazyest-gallery' )] = bin2hex( $exif['EXIF']['FileSource'] ) == 0x03 ? _x( 'DSC', 'exif info', 'eazyest-gallery'  ) : _x( 'unknown', 'exif info', 'eazyest-gallery'  );
-				 
-	    if ( isset( $exif['EXIF']['SceneType'] ) ) 
+
+	    if ( isset( $exif['EXIF']['SceneType'] ) )
 	      $img_info[_x( 'Scene Type', 'exif info', 'eazyest-gallery' )] = bin2hex( $exif['EXIF']['SceneType'] ) == 0x01 ? _x( 'A directly photographed image', 'exif info', 'eazyest-gallery'  ) :  _x( 'unknown', 'exif info', 'eazyest-gallery'  );
-				 
-	    if ( isset( $exif['COMPUTED']['Thumbnail.FileType'] ) ) 
-	      $img_info[_x( 'Thumbnail FileType', 'exif info', 'eazyest-gallery' )] = $exif['COMPUTED']['Thumbnail.FileType']; 
-	      
-	    if ( isset( $exif['COMPUTED']['Thumbnail.MimeType'] ) ) 
+
+	    if ( isset( $exif['COMPUTED']['Thumbnail.FileType'] ) )
+	      $img_info[_x( 'Thumbnail FileType', 'exif info', 'eazyest-gallery' )] = $exif['COMPUTED']['Thumbnail.FileType'];
+
+	    if ( isset( $exif['COMPUTED']['Thumbnail.MimeType'] ) )
 	      $img_info[_x( 'Thumbnail MimeType', 'exif info', 'eazyest-gallery' )] = $exif['COMPUTED']['Thumbnail.MimeType'];
-		}   
-    ?>    
+		}
+    ?>
       <script type="text/javascript">
       	var showingExif = false;
       	var showExifString = '<?php _e( 'Show Exif data', 'eazyest-gallery' ); ?>';
@@ -615,20 +615,20 @@ class Eazyest_Gallery_Exif {
 						jQuery('#exif-imagedata').hide();
 						jQuery('#show-exif').html(showExifString);
 						showingExif = false;
-					} else {							
+					} else {
 						jQuery('#exif-imagedata').show();
 						jQuery('#show-exif').html(hideExifString);
 						showingExif = true;
 					}
-				}	
+				}
 			</script>
       <style type="text/css">
       	#exif-imagedata { display:none }
       	table.imagedata-table { margin-top:1em }
       	table.imagedata-table tbody th { padding-right: 10px; text-align:right; width:20em; }
-			</style> 
+			</style>
 			<div id="exif-imagedata">
-    		<?php if ( $exif ) : ?>  
+    		<?php if ( $exif ) : ?>
 	      <table class="imagedata-table">
 	      	<thead>
 	      		<tr>
@@ -646,12 +646,12 @@ class Eazyest_Gallery_Exif {
 	            <td><?php echo $img_info[__( 'Height', 'eazyest-gallery' )]; ?></td>
 	          </tr>
 	          <tr>
-	            <th scope="row"><?php _e( 'Width', 'eazyest-gallery' ); ?></th>            
+	            <th scope="row"><?php _e( 'Width', 'eazyest-gallery' ); ?></th>
 	            <td><?php echo $img_info[__( 'Width', 'eazyest-gallery' )]; ?></td>
 	          </tr>
 	          <?php if ( isset( $img_info[__( 'Make', 'eazyest-gallery' )] ) && isset( $img_info[__( 'Model', 'eazyest-gallery' )]) ) : ?>
 	          <tr>
-	            <th scope="row"><?php _e( 'Camera', 'eazyest-gallery' ); ?></th>            
+	            <th scope="row"><?php _e( 'Camera', 'eazyest-gallery' ); ?></th>
 	            <td><?php echo $img_info[__( 'Make', 'eazyest-gallery' )] . ' - ' . $img_info[__( 'Model', 'eazyest-gallery' )]; ?></td>
 	          </tr>
 	          <?php endif; ?>
@@ -664,9 +664,9 @@ class Eazyest_Gallery_Exif {
 		          </tr>
 		        <?php endif; endforeach; ?>
 	        </tbody>
-	      </table> 
+	      </table>
 	    	<?php else : ?>
-	    	<?php  list($width, $height, $type, $attr) = getimagesize( $original ); ?> 
+	    	<?php  list($width, $height, $type, $attr) = getimagesize( $original ); ?>
 	      <table class="imagedata-table">
 	      	<thead>
 	      		<tr>
@@ -679,46 +679,46 @@ class Eazyest_Gallery_Exif {
 	            <th scope="row"><?php _e( 'Date', 'eazyest-gallery' ); ?></th>
 	            <td><?php echo date( get_option('date_format' ), filemtime( $original ) ); ?></td>
 	          </tr>
-						<tr>  
+						<tr>
 	            <th scope="row"><?php _e( 'Height', 'eazyest-gallery' ); ?></th>
 	            <td><?php printf( '%dpx', $height ); ?></td>
 	          </tr>
-						<tr>  
-	            <th scope="row"><?php _e( 'Width', 'eazyest-gallery'  ); ?></th>            
+						<tr>
+	            <th scope="row"><?php _e( 'Width', 'eazyest-gallery'  ); ?></th>
 	            <td><?php printf( '%dpx', $width ); ?></td>
 	          </tr>
 	        </tbody>
-	      </table>  
-				<?php endif; ?> 
-  		</div>  		
-      <p><a id="show-exif" href="javascript:showExif();"><?php _e( 'Show Exif data', 'eazyest-gallery' ); ?></a></p> 
+	      </table>
+				<?php endif; ?>
+  		</div>
+      <p><a id="show-exif" href="javascript:showExif();"><?php _e( 'Show Exif data', 'eazyest-gallery' ); ?></a></p>
   	<?php
-		wp_enqueue_script( 'jquery' );  
+		wp_enqueue_script( 'jquery' );
 	}
-	
+
 } // Eazyest_Gallery_Exif
 
 /**
  * ezg_get_exif()
  * Get exif data for a particular attachment.
- * 
+ *
  * @since 0.2.0 (r324)
  * @param int $attachment_id
  * @return array|bool exif data|false if no exif data.
  */
 function ezg_get_exif( $attachment_id ) {
-	
+
 	$exif = eazyest_gallery_exif()->get_exif_data( $attachment_id );
-		
+
 	if ( empty( $exif ) )
 		return false;
-	
+
 	return $exif;
 }
 
 /**
  * eazyest_gallery_exif()
- * 
+ *
  * @since 0.1.0 (r2)
  * @return object Eazyest_Gallery_Exif
  */

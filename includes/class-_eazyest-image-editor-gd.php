@@ -1,12 +1,12 @@
 <?php
- 
+
 // Exit if accessed directly
-if ( !defined( 'ABSPATH' ) ) exit;  
+if ( !defined( 'ABSPATH' ) ) exit;
 
 /**
  * _Eazyest_Image_Editor
  * Pseudo class to have the Eazyest_Image_editor class extend WP_Image_Editor_GD.
- * 
+ *
  * @package Eazyest Gallery
  * @subpackage Image Editor
  * @author Marcel Brinkkemper

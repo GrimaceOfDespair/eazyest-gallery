@@ -25,10 +25,10 @@ while ( have_posts() ) : the_post();
 					 */
 ezg_get_template_part( 'content', 'galleryfolder' );
 
-ezg_folders_break( ++$ezg_i ); 
-endwhile; ?>				
+ezg_folders_break( ++$ezg_i );
+endwhile; ?>
 			<br style="clear: both;"/>
-			
+
 			<?php	do_action( 'eazyest_gallery_end_of_gallery' ); ?>
 		</div><!-- #eazyest-gallery-0 -->
 		<?php eazyestgallery_content_nav( 'nav-below' ); ?>
@@ -46,5 +46,3 @@ endwhile; ?>
 get_sidebar( 'content' );
 get_sidebar();
 get_footer();
-
-

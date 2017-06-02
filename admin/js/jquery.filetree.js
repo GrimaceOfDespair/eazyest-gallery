@@ -1,6 +1,6 @@
 // jQuery File Tree Plugin for Eazyest Gallery
 //
-// Version 1.01-r134 
+// Version 1.01-r134
 //
 // Cory S.N. LaViska
 // A Beautiful Site (http://abeautifulsite.net/)
@@ -30,12 +30,12 @@
 // 1.00 - released (24 March 2008)
 //
 // TERMS OF USE
-// 
+//
 // This plugin is dual-licensed under the GNU General Public license and the MIT license and
-// is copyright 2008 A Beautiful Site, LLC. 
+// is copyright 2008 A Beautiful Site, LLC.
 //
 if(jQuery) (function($){
-	
+
 	$.extend($.fn, {
 		fileTree: function(o, h) {
 			// Defaults
@@ -49,9 +49,9 @@ if(jQuery) (function($){
 			if( o.collapseEasing == undefined ) o.collapseEasing = null;
 			if( o.multiFolder == undefined ) o.multiFolder = true;
 			if( o.loadMessage == undefined ) o.loadMessage = 'Loading...';
-			
+
 			$(this).each( function() {
-				
+
 				function showTree(c, t) {
 					$(c).addClass('wait');
 					$(".jqueryFileTree.start").remove();
@@ -67,7 +67,7 @@ if(jQuery) (function($){
 						bindTree(c);
 					});
 				}
-				
+
 				function bindTree(t) {
 					$(t).find('li a').bind(o.folderEvent, function() {
 						if( $(this).parent().hasClass('directory') ) {
@@ -85,9 +85,9 @@ if(jQuery) (function($){
 								$(this).parent().find('ul').slideUp({ duration: o.collapseSpeed, easing: o.collapseEasing });
 								$(this).parent().removeClass('expanded').addClass('collapsed');
 							}
-						} 
+						}
 						h($(this).attr('rel'));
-						
+
 						return false;
 					});
 					// Prevent A from triggering the # on non-click events
@@ -100,5 +100,5 @@ if(jQuery) (function($){
 			});
 		}
 	});
-	
+
 })(jQuery);

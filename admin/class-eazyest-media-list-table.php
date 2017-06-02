@@ -1,9 +1,9 @@
 <?php
 
 // Exit if accessed directly
-if ( !defined( 'ABSPATH' ) ) exit;  
+if ( !defined( 'ABSPATH' ) ) exit;
 
-	
+
 if ( ! class_exists( 'WP_List_Table' ) )
 	require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
 
@@ -15,7 +15,7 @@ if ( ! class_exists( 'WP_List_Table' ) )
  * @subpackage List Table
  * @author Marcel Brinkkemper
  * @copyright 2012 Brimosoft
- * @version 0.2.0 (r323) 
+ * @version 0.2.0 (r323)
  * @since 0.1.0 (r2)
  * @uses WP_List_Table
  * @access public
@@ -23,57 +23,57 @@ if ( ! class_exists( 'WP_List_Table' ) )
  * @link http://codex.wordpress.org/Class_Reference/WP_List_Table
  */
 class Eazyest_Media_List_Table extends WP_List_Table {
-	
+
 	/**
 	 * Eazyest_Media_List_Table::__construct()
-	 * 
+	 *
 	 * @param array $args
 	 * @return void
 	 */
 	function __construct( $args = array() ) {
-		parent::__construct( $args ); 
-		
+		parent::__construct( $args );
+
 		// pretend we are on the media screen
 		$this->args['plural'] = 'media';
 		$this->args['screen'] = isset( $args['screen'] ) ? $args['screen'] : null;
 	}
-	
+
 	/**
 	 * Eazyest_Media_List_Table::pagination()
 	 * Add a view switcher to the table
-	 * 
+	 *
 	 * @since 0.1.0 (r2)
 	 * @param string $which
 	 * @return void
 	 */
 	function pagination( $which ) {
 		global $mode;
-		
+
 		extract( $this->_pagination_args, EXTR_SKIP );
-		
+
 		?>
-		<div class="tablenav-pages one-page">			
+		<div class="tablenav-pages one-page">
 			<span class="displaying-num"><?php printf( _n( '1 image', '%s images', $total_items, 'eazyest-gallery' ), number_format_i18n( $total_items ) ) ?></span>
 		</div>
-		<?php 
+		<?php
 		if ( 'top' == $which ) $this->view_switcher( $mode );
 	}
-	
+
 	function no_items() {
 		_e( 'No images found.', 'eazyest-gallery' );
 	}
-	
+
 	/**
 	 * Eazyest_Media_List_Table::get_columns()
-	 * 
+	 *
 	 * @since 0.1.0 (r2)
 	 * @return array
 	 */
-	function get_columns() {		
+	function get_columns() {
 		$drag_url = eazyest_gallery()->plugin_url . 'admin/images/sort.png';
 		$columns = array();
 		$columns['cb']           = '<input type="checkbox" />';
-		if (  'menu_order-ASC' == eazyest_gallery()->sort_by( 'thumbnails' ) ) 
+		if (  'menu_order-ASC' == eazyest_gallery()->sort_by( 'thumbnails' ) )
 			$columns['media_drag'] = '<img src="' . $drag_url . '" alt="' . __( 'Draggable Column', 'eazyest-gallery' ) .  '" style="width:16px; height=16px"/>';
 		$columns['icon']         = '';
 		$columns['file']         = _x( 'File', 'column name', 'eazyest-gallery' );
@@ -82,12 +82,12 @@ class Eazyest_Media_List_Table extends WP_List_Table {
 		$columns['date']         = _x( 'Date', 'column name', 'eazyest-gallery' );
 		return apply_filters( 'eazyest_gallery_images_columns', $columns );
 	}
-	
+
 	/**
 	 * Eazyest_Media_List_Table::display()
 	 * Override display to prevent duplicate ids.
 	 * @see WP_List_Table::display()
-	 * 
+	 *
 	 * @since 0.1.0 (r150)
 	 * @return void
 	 */
@@ -103,13 +103,13 @@ class Eazyest_Media_List_Table extends WP_List_Table {
 				<?php $this->print_column_headers(); ?>
 			</tr>
 			</thead>
-		
+
 			<tfoot>
 			<tr>
 				<?php $this->print_column_headers( false ); ?>
 			</tr>
 			</tfoot>
-		
+
 			<tbody id="the-media-list"<?php if ( $singular ) echo " data-wp-lists='list:$singular'"; ?>>
 				<?php $this->display_rows_or_placeholder(); ?>
 			</tbody>
@@ -117,11 +117,11 @@ class Eazyest_Media_List_Table extends WP_List_Table {
 		<?php
 		$this->display_tablenav( 'bottom' );
 	}
-	
+
 	/**
 	 * Eazyest_Media_List_Table::get_attached_images()
 	 * Get all attached images for use in Edit Folder screen.
-	 * 
+	 *
 	 * @since 0.2.0 (r232)
 	 * @acces private
 	 * @uses add_filter() to add filter for 'posts_orderby'
@@ -130,13 +130,13 @@ class Eazyest_Media_List_Table extends WP_List_Table {
 	 * @return WP_Query object
 	 */
 	private function get_attached_images() {
-		
-		$option = explode( '-', eazyest_gallery()->sort_by( 'thumbnails' ) );		
+
+		$option = explode( '-', eazyest_gallery()->sort_by( 'thumbnails' ) );
 		$sort_field = $option[0];
 		$sort_order = $option[1];
-				
+
 		global $post;
-		
+
 		$args = array(
 			 'post_type'      => 'attachment',
 			 'post_parent'    => $post->ID,
@@ -144,39 +144,39 @@ class Eazyest_Media_List_Table extends WP_List_Table {
 			 'post_mime_type' => 'image',
 			 'orderby'        => $sort_field,
 			 'order'          => $sort_order,
-			 'posts_per_page' => -1, 
+			 'posts_per_page' => -1,
 		);
-		
+
 		add_filter( 'posts_orderby', array( eazyest_folderbase(), 'thumbnails_orderby' ) );
-		$query = new WP_Query( $args );		
+		$query = new WP_Query( $args );
 		remove_filter( 'posts_orderby', array( eazyest_folderbase(), 'thumbnails_orderby' ) );
-		
+
 		return $query;
 	}
-	
+
 	/**
 	 * Eazyest_Media_List_Table::prepare_items()
-	 * 
+	 *
 	 * @since 0.1.0 (r2)
 	 * @uses wpdb::get_results()
 	 * @return void
 	 */
 	function prepare_items() {
 		global $mode;
-		
+
  		$this->is_trash = isset( $_REQUEST['status'] ) && 'trash' == $_REQUEST['status'];
-		  			
+
 		$columns = $this->get_columns();
 		$hidden = array();
 		$sortable = $this->get_sortable_columns();
 		$this->_column_headers = array( $columns, $hidden, $sortable );
-		
+
 		$mode = empty( $_REQUEST['mode'] ) ? 'list' : $_REQUEST['mode'];
-		
+
 		$option = explode( '-', eazyest_gallery()->sort_by( 'thumbnails' ) );
 		$sort_field = $option[0];
 		$sort_order = $option[1];
-		
+
 		if ( isset( $_REQUEST['orderby'] ) ) {
 			switch( $_REQUEST['orderby'] ) {
 			 	case 'description' :
@@ -186,13 +186,13 @@ class Eazyest_Media_List_Table extends WP_List_Table {
 		 			$sort_field = 'post_date';
 		 			break;
 			}
-		}	
+		}
 		if ( isset( $_REQUEST['orderby'] ) && isset( $_REQUEST['order'] ) ) {
 			$sort_order = strtoupper( $_REQUEST['order'] );
 		}
 		eazyest_gallery()->sort_thumbnails = "{$sort_field}-{$sort_order}";
-		
-		$query = $this->get_attached_images();						
+
+		$query = $this->get_attached_images();
 		$this->items = $query->posts;
 		$total_items = count( $this->items );
 		$this->set_pagination_args( array(
@@ -201,26 +201,26 @@ class Eazyest_Media_List_Table extends WP_List_Table {
 			'per_page' => $query->post_count,
 		) );
 	}
-	
-	
+
+
 	/**
 	 * Eazyest_Media_List_Table::get_sortable_columns()
-	 * 
+	 *
 	 * @since 0.1.0 (r2)
 	 * @return array
 	 */
 	function get_sortable_columns() {
 		$option = explode( '-', eazyest_gallery()->sort_thumbnails );
-		
+
 		$sort_field = $option[0];
 		$sort_order = $option[1];
 		$file_asc = $date_asc = $content_asc = false;
-		
+
 		$option = explode( '-', eazyest_gallery()->sort_thumbnails );
-		
+
 		$sort_field = $option[0];
 		$sort_order = $option[1] == 'ASC';
-		
+
 		switch( $sort_field ) {
 			case 'name' :
 				$file_asc = $sort_order;
@@ -230,9 +230,9 @@ class Eazyest_Media_List_Table extends WP_List_Table {
 				break;
 			case 'date' :
 				$date_asc = $sort_order;
-			break;		 	
+			break;
 		}
-		
+
 		return array(
 			'file'         => array( 'file',    $file_asc    ),
 			'date'         => array( 'date',    $date_asc    ),
@@ -240,17 +240,17 @@ class Eazyest_Media_List_Table extends WP_List_Table {
 			'comments'     => array( 'comments', 'DESC' ),
 		);
 	}
-		
+
 	function get_views() {
 		return array(
 			'save-sort' => eazyest_admin()->folder_editor()->hidden_order_field( $this->items, 'media' )
-		);		
+		);
 	}
-	
+
 	/**
 	 * Eazyest_Media_List_Table::bulk_actions()
 	 * override WP_List_Table::bulk_actions to prevent duplicate 'action' fields
-	 * 
+	 *
 	 * @since 0.1.0 (r2)
 	 * @uses apply_filters
 	 * @return void
@@ -284,12 +284,12 @@ class Eazyest_Media_List_Table extends WP_List_Table {
 		}
 		submit_button( __( 'Apply', 'eazyest-gallery' ), 'action', false, false, array( 'id' => "doaction$two" ) );
 		echo "\n";
-	}	
-	
+	}
+
 	/**
 	 * Eazyest_Media_List_Table::current_action()
 	 * override WP_List_Table::current_action() to handle 'attachment_action' field
-	 * 
+	 *
 	 * @return mixed string action bool false if none set
 	 */
 	function current_action() {
@@ -301,25 +301,25 @@ class Eazyest_Media_List_Table extends WP_List_Table {
 
 		return false;
 	}
-	
+
 	function extra_tablenav( $which ) {
 		$collected = eazyest_folderbase()->images_collected();
 		if ( $collected ) {
-			$collected_message = 0 < $collected ? 
+			$collected_message = 0 < $collected ?
 				sprintf( _n( '1 new image found', '%s new images found', $collected, 'eazyest-gallery'), number_format_i18n( $collected )  ) :
 					sprintf( _n( '1 missing image', '%s missing images', -$collected, 'eazyest-gallery'), number_format_i18n( -$collected )  )
 			?>
 			<div class="tablenav-pages collected">
 				<span class="displaying-num"><?php echo $collected_message ?></span>
 			</div>
-			<?php  
-		} 
+			<?php
+		}
 	}
-	
+
 	/**
 	 * Eazyest_Media_List_Table::get_bulk_actions()
 	 * Define bulk actions for attached images
-	 * 
+	 *
 	 * @since 0.1.0 (r2)
 	 * @return array
 	 */
@@ -328,12 +328,12 @@ class Eazyest_Media_List_Table extends WP_List_Table {
 	    'delete'    => __( 'Delete Permanently', 'eazyest-gallery' )
 	  );
 	  return $actions;
-	} 
-	
+	}
+
 	/**
 	 * Eazyest_Media_List_Table::_get_row_actions()
 	 * Add actions for an attachment item ( Edit, Delete Permanently, View )
-	 * 
+	 *
 	 * @param stdClass $item
 	 * @param string $att_title
 	 * @since 0.1.0 (r2)
@@ -344,8 +344,8 @@ class Eazyest_Media_List_Table extends WP_List_Table {
 	 * @return array
 	 */
 	protected function _get_row_actions( $item, $att_title ){
-		
-		$actions = array();	
+
+		$actions = array();
 		$item_url   = add_query_arg( array( 'post' => $item->ID ), admin_url( 'post.php' ) );
 		$edit_url   = get_edit_post_link( $item->ID, true );
 		$delete_url = add_query_arg( array( 'action' => 'attachment_action', 'attachment_action' =>'delete', 'media' => $item->ID, 'bulk-media' => wp_create_nonce( 'bulk-media' ) ), $item_url );
@@ -355,12 +355,12 @@ class Eazyest_Media_List_Table extends WP_List_Table {
 		if ( current_user_can( 'delete_post', $item->ID ) )
 			$actions['delete'] = "<a class='submitdelete' href='$delete_url' onclick='return showNotice.warn();'>" . __( 'Delete Permanently', 'eazyest-gallery' ) . "</a>";
 		$actions['view'] = "<a href='$view_url' title='" . esc_attr( sprintf( __( 'View &#8220;%s&#8221;', 'eazyest-gallery' ), $att_title ) ) . "' rel='permalink'>" . __( 'View', 'eazyest-gallery' ) . "</a>";
-		
+
 		$actions = apply_filters( 'eazyest_gallery_media_row_actions', $actions, $item );
 		return $actions;
 	}
-	
-	
+
+
 
 	/**
 	 * Generate the table navigation above or below the table
@@ -386,10 +386,10 @@ class Eazyest_Media_List_Table extends WP_List_Table {
 	</div>
 	<?php
 	}
-	
+
 	/**
 	 * Eazyest_Media_List_Table::display_rows()
-	 * 
+	 *
 	 * @since 0.1.0 (r2)
 	 * @uses add_filter()
 	 * @uses current_user_can()
@@ -407,19 +407,19 @@ class Eazyest_Media_List_Table extends WP_List_Table {
 	 * @return void
 	 */
 	function display_rows() {
-		
+
 		$alt = '';
 		$tabindex = 98;
-		
+
 		if ( ! empty ( $this->items ) ) {
 			foreach( $this->items as $item ) {
 				$tabindex = $tabindex + 2;
 				$user_can_edit = current_user_can( 'edit_post', $item->ID );
-				
+
 				if ( $this->is_trash && $item->post_status != 'trash' ||  !$this->is_trash && $item->post_status == 'trash' )
 					continue;
 
-				$item_owner = ( get_current_user_id() == $item->post_author ) ? 'self' : 'other';	
+				$item_owner = ( get_current_user_id() == $item->post_author ) ? 'self' : 'other';
 				$alt = ( 'alternate' == $alt ) ? '' : 'alternate';
 				$att_title = esc_html( $item->post_excerpt );
 				if ( empty( $att_title ) )
@@ -428,16 +428,16 @@ class Eazyest_Media_List_Table extends WP_List_Table {
 				<tr id='post-<?php echo $item->ID; ?>' class='<?php echo trim( $alt . ' author-' . $item_owner . ' status-' . $item->post_status ); ?>' valign="top">
 				<?php
 				list( $columns, $hidden ) = $this->get_column_info();
-								
+
 				foreach ( $columns as $column_name => $column_display_name ) {
 					$class = "class='$column_name column-$column_name'";
-				
+
 					$style = '';
 					if ( in_array( $column_name, $hidden ) )
 						$style = ' style="display:none;"';
-				
+
 					$attributes = $class . $style;
-					
+
 					switch( $column_name ) {
 
 					case 'cb':
@@ -463,15 +463,15 @@ class Eazyest_Media_List_Table extends WP_List_Table {
 								<a href="<?php echo get_edit_post_link( $item->ID, true ); ?>" title="<?php echo esc_attr( sprintf( __( 'Edit &#8220;%s&#8221;', 'eazyest-gallery' ), $att_title ) ); ?>">
 									<?php echo $thumb; ?>
 								</a>
-				
-						<?php			
+
+						<?php
 								}
 							}
 						?>
 						</td>
 						<?php
 						break;
-						
+
 						case 'file' :
 							$filename = basename( get_post_meta( $item->ID, '_wp_attached_file', true ) );
 							?>
@@ -519,9 +519,9 @@ class Eazyest_Media_List_Table extends WP_List_Table {
 									$caption = $item->post_excerpt;
 									if ( empty( $caption ) )
 										$caption = $item->post_title;
-									$caption = stripslashes( $caption );	
+									$caption = stripslashes( $caption );
 									?>
-									<input type="text" class="attachment-excerpt" name="attachment[<?php echo $item->ID ?>][post_excerpt]" size="30" value="<?php echo esc_textarea( $caption ); ?>" id="title-<?php echo $item->ID ?>" autocomplete="off" tabindex="<?php echo $tabindex ?>" />								
+									<input type="text" class="attachment-excerpt" name="attachment[<?php echo $item->ID ?>][post_excerpt]" size="30" value="<?php echo esc_textarea( $caption ); ?>" id="title-<?php echo $item->ID ?>" autocomplete="off" tabindex="<?php echo $tabindex ?>" />
 									<?php
 									global $mode;
 									if ( 'excerpt' == $mode ) {
@@ -536,18 +536,18 @@ class Eazyest_Media_List_Table extends WP_List_Table {
 												'teeny'         => false,
 												'tinymce'       => false,
 												'quicktags'     => false
-											) 
+											)
 										);
 										?>
 										</div>
 										<?php
 										do_action( 'eazyest_gallery_attachment_list_edit', $item );
-									} 
-								} 
-								?>			
+									}
+								}
+								?>
 							</td>
 							<?php
-							break;					
+							break;
 
 						case 'comments':
 							$attributes = 'class="comments column-comments num"' . $style;
@@ -556,14 +556,14 @@ class Eazyest_Media_List_Table extends WP_List_Table {
 								<div class="post-com-count-wrapper">
 									<?php
 									$pending_comments = get_pending_comments_num( $item->ID );
-							
+
 									$this->comments_bubble( $item->ID, $pending_comments );
 									?>
 								</div>
 							</td>
 							<?php
 							break;
-							
+
 							case 'date':
 								if ( '0000-00-00 00:00:00' == $item->post_date ) {
 									$h_time = __( 'Unpublished', 'eazyest-gallery' );
@@ -583,17 +583,17 @@ class Eazyest_Media_List_Table extends WP_List_Table {
 								<td <?php echo $attributes ?>><?php echo $h_time ?></td>
 								<?php
 								break;
-								
+
 						case 'media_drag':
-						?><td <?php echo $attributes ?>> 						
+						?><td <?php echo $attributes ?>>
 							<?php	echo eazyest_admin()->folder_editor()->drag_handle( $item->ID ); ?></td>
 							<?php
 							break;
-											
+
 					}
 				}
 			}
 		}
 	}
-	
+
 } // Eazyest_Media_List_Table

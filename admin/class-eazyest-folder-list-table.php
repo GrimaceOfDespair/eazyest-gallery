@@ -1,28 +1,28 @@
 <?php
 
 // Exit if accessed directly
-if ( !defined( 'ABSPATH' ) ) exit;  
+if ( !defined( 'ABSPATH' ) ) exit;
 
-	
+
 if ( ! class_exists( 'WP_List_Table' ) )
 	require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
 
 /**
  * Eazyest_Folder_List_Table
  * This is a highly modified WP_List_Table/WP_Posts_List_Table, to display alongside Eazyest_Media_List_Table
- * 
+ *
  * @package Eazyest Gallery
  * @subpackage List Table
  * @author Marcel Brinkkemper
  * @copyright 2012 Brimosoft
  * @since 0.1.0 (r2)
  * @version 0.2.0 (r323)
- * @access public 
+ * @access public
  * @see WordPress WP_List_Table
  * @link http://codex.wordpress.org/Class_Reference/WP_List_Table
  */
 class Eazyest_Folder_List_Table extends WP_List_Table {
-	
+
 	/**
 	 * Whether the items should be displayed hierarchically or linearly
 	 *
@@ -31,10 +31,10 @@ class Eazyest_Folder_List_Table extends WP_List_Table {
 	 * @access protected
 	 */
 	protected $hierarchical_display;
-	
+
 	/**
 	 * Eazyest_Folder_List_Table::__construct()
-	 * 
+	 *
 	 * @uses WP_List_Table
 	 * @uses wp_parse_args()
 	 * @uses add_filter()
@@ -52,7 +52,7 @@ class Eazyest_Folder_List_Table extends WP_List_Table {
 		) );
 
 		$this->screen = convert_to_screen( $args['screen'] );
-		
+
 		$post_type = eazyest_gallery()->post_type;
 		add_filter( "manage_{$post_type}_columns", array( $this, 'get_columns' ), 0 );
 		$this->_args = $args;
@@ -62,30 +62,30 @@ class Eazyest_Folder_List_Table extends WP_List_Table {
 			add_action( 'admin_footer', array( $this, '_js_vars' ) );
 		}
 	}
-	
+
 	/**
 	 * Eazyest_Folder_List_Table::no_items()
-	 * 
+	 *
 	 * @since 0.1.0 (r2)
 	 * @return void
 	 */
 	function no_items() {
 		_e( 'No folders found.', 'eazyest-gallery' );
 	}
-	
+
 	/**
 	 * Eazyest_Folder_List_Table::get_columns()
-	 * 
+	 *
 	 * @since 0.1.0 (r2)
 	 * @return
 	 */
-	function get_columns() {	  
+	function get_columns() {
 		return apply_filters( 'eazyest_gallery_subfolders_columns', eazyest_admin()->folder_editor()->folder_columns( array() ) );
 	}
 
 	/**
 	 * Eazyest_Folder_List_Table::get_sortable_columns()
-	 * 
+	 *
 	 * @since 0.1.0 (r2)
 	 * @return
 	 */
@@ -96,16 +96,16 @@ class Eazyest_Folder_List_Table extends WP_List_Table {
 			'folder_comments' => 'comment_count',
 			'folder_date'     => array( 'date', true )
 		);
-	}	
-	
+	}
+
 	/**
 	 * Eazyest_Folder_List_Table::print_column_headers()
-	 * 
+	 *
 	 * @since 0.1.0 (r2)
 	 * @uses set_url_scheme()
 	 * @uses remove_query_arg()
-	 * @uses add_query_arg() 
-	 * @uses esc_url() 
+	 * @uses add_query_arg()
+	 * @uses esc_url()
 	 * @param bool $with_id
 	 * @return void
 	 */
@@ -168,16 +168,16 @@ class Eazyest_Folder_List_Table extends WP_List_Table {
 				$class = "class='" . join( ' ', $class ) . "'";
 				$class = str_replace( '-folder_', '-', $class );
 			}
-				
+
 			echo "<th scope='col' $id $class $style>$column_display_name</th>";
 		}
 	}
-	
+
 	/**
 	 * Eazyest_Folder_List_Table::display()
 	 * Override display to prevent duplicate ids in folder-editor.
 	 * @see WP_List_Table::display()
-	 * 
+	 *
 	 * @since 0.1.0 (r150)
 	 * @return void
 	 */
@@ -193,13 +193,13 @@ class Eazyest_Folder_List_Table extends WP_List_Table {
 				<?php $this->print_column_headers(); ?>
 			</tr>
 			</thead>
-		
+
 			<tfoot>
 			<tr>
 				<?php $this->print_column_headers( false ); ?>
 			</tr>
 			</tfoot>
-		
+
 			<tbody id="the-folder-list"<?php if ( $singular ) echo " data-wp-lists='list:$singular'"; ?>>
 				<?php $this->display_rows_or_placeholder(); ?>
 			</tbody>
@@ -207,18 +207,18 @@ class Eazyest_Folder_List_Table extends WP_List_Table {
 		<?php
 		$this->display_tablenav( 'bottom' );
 	}
-	
+
 	/**
 	 * Eazyest_Folder_List_Table::get_subfolders()
 	 * Get all subfolders for use in Edit Folder screen.
-	 * 
+	 *
 	 * @since 0.2.0 (r323)
 	 * @access private
 	 * @uses WP_Query
 	 * @return WP_Query object
 	 */
-	private function get_subfolders() {		
-		$option = explode( '-', eazyest_gallery()->sort_by( 'folders' ) );		
+	private function get_subfolders() {
+		$option = explode( '-', eazyest_gallery()->sort_by( 'folders' ) );
 		$sort_field = $option[0] == 'menu_order' ? 'menu_order' :  substr( $option[0], 5 );
 		$sort_order = $option[1];
 		global $post;
@@ -229,25 +229,25 @@ class Eazyest_Folder_List_Table extends WP_List_Table {
 		  'orderby'     => $sort_field,
 		  'order'       => $sort_order,
 		);
-		return new WP_Query( $args );		
+		return new WP_Query( $args );
 	}
-	
+
 	/**
 	 * Eazyest_Folder_List_Table::prepare_items()
-	 * 
+	 *
 	 * @since 0.1.0 (r2)
 	 * @uses is_post_type_hierarchical()
 	 * @return void
 	 */
-	function prepare_items() {	
+	function prepare_items() {
 		$columns = $this->get_columns();
 		$hidden = array();
 		$sortable = $this->get_sortable_columns();
 		$this->_column_headers = array( $columns, $hidden, $sortable );
-		
+
 		$this->hierarchical_display = is_post_type_hierarchical( $this->screen->post_type );
-		
-		$option = explode( '-', eazyest_gallery()->sort_by( 'folders' ) );		
+
+		$option = explode( '-', eazyest_gallery()->sort_by( 'folders' ) );
 		$sort_field = $option[0];
 		$sort_order = $option[1];
 		global $wpdb, $post;
@@ -260,13 +260,13 @@ class Eazyest_Folder_List_Table extends WP_List_Table {
 		 			$sort_field = 'post_date';
 		 			break;
 			}
-		}	
+		}
 		if ( isset( $_REQUEST['folder_orderby'] ) && isset( $_REQUEST['order'] ) ) {
 			$sort_order = strtoupper( $_REQUEST['order'] );
 		}
 		eazyest_gallery()->sort_folders = "{$sort_field}-{$sort_order}";
 		$query = $this->get_subfolders();
-		
+
 		$this->items = $query->posts;
 		$this->set_pagination_args( array(
 			'total_items' => $query->post_count,
@@ -274,10 +274,10 @@ class Eazyest_Folder_List_Table extends WP_List_Table {
 			'per_page'    => $query->post_count,
 		) );
 	}
-	
+
 	/**
 	 * Eazyest_Folder_List_Table::pagination()
-	 * 
+	 *
 	 * @since 0.1.0 (r2)
 	 * @uses number_format_i18n()
 	 * @param string $which
@@ -285,25 +285,25 @@ class Eazyest_Folder_List_Table extends WP_List_Table {
 	 */
 	function pagination( $which ) {
 		extract( $this->_pagination_args, EXTR_SKIP );
-		
+
 		?>
-		<div class="tablenav-pages one-page">			
+		<div class="tablenav-pages one-page">
 			<span class="displaying-num"><?php printf( _n( '1 folder', '%s folders', $total_items, 'eazyest-gallery' ), number_format_i18n( $total_items ) ) ?></span>
 		</div>
-		<?php 
+		<?php
 	}
-	
-	
+
+
 	/**
 	 * Eazyest_Folder_List_Table::display_tablenav()
 	 * Display table navigation with  altered nonce field
-	 * 
+	 *
 	 * @since 0.1.0 (r2)
 	 * @uses wp_nonce_field()
 	 * @param string $which
 	 * @return void
 	 */
-	function display_tablenav( $which ) {	
+	function display_tablenav( $which ) {
 		if ( 'top' == $which )
 			wp_nonce_field( 'bulk-folders', 'bulk-folders' );
 		?>
@@ -317,15 +317,15 @@ class Eazyest_Folder_List_Table extends WP_List_Table {
 			$this->extra_tablenav( $which );
 			$this->pagination( $which );
 			?>
-	
+
 			<br class="clear" />
 		</div>
 		<?php
 	}
-		
+
 	/**
 	 * Eazyest_Folder_List_Table::extra_tablenav()
-	 * 
+	 *
 	 * @since 0.1.0 (r2)
 	 * @uses number_format_i18n()
 	 * @param mixed $which
@@ -334,43 +334,43 @@ class Eazyest_Folder_List_Table extends WP_List_Table {
 	function extra_tablenav( $which ) {
 		$collected = eazyest_folderbase()->folders_collected();
 		global $post;
-		if ( ! in_array( $post->post_status, array('new', 'auto-draft', 'draft', 'trash' ) ) ) :		
-		?>	
+		if ( ! in_array( $post->post_status, array('new', 'auto-draft', 'draft', 'trash' ) ) ) :
+		?>
 			<div class="tablenav-pages add-new">
 				<a href="post-new.php?post_type=<?php echo eazyest_gallery()->post_type ?>&post_parent=<?php echo $post->ID ?>" class="add-subfolder"><?php _e( 'Add subfolder', 'eazyest-gallery' ) ?></a>
-			</div>	
+			</div>
 		<?php
 		endif;
 		if ( $collected ) {
-			$collected_message = 0 < $collected ? 
+			$collected_message = 0 < $collected ?
 				sprintf( _n( '1 new folder found', '%s new folders found', $collected, 'eazyest-gallery'), number_format_i18n( $collected )  ) :
 					sprintf( _n( '1 missing folder', '%s missing folders', -$collected, 'eazyest-gallery'), number_format_i18n( -$collected )  )
-			?>	
+			?>
 			<div class="tablenav-pages collected">
 				<span class="displaying-num"><?php echo $collected_message ?></span>
 			</div>
-			<?php  
-		} 
+			<?php
+		}
 	}
 
 	/**
 	 * Eazyest_Folder_List_Table::get_bulk_actions()
-	 * 
+	 *
 	 * @since 0.1.0 (r2)
 	 * @return array()
 	 */
 	function get_bulk_actions() {
-		$actions = array();			
+		$actions = array();
 		$actions['trash'] = __( 'Move to Trash', 'eazyest-gallery' );
 
 		return $actions;
 	}
-	
+
 	/**
 	 * Eazyest_Folder_List_Table::get_views()
 	 * Override WP_List_Table::get_views()
 	 * Add only field with menu order
-	 * 
+	 *
 	 * @since 0.1.0 (r2)
 	 * @return array
 	 */
@@ -379,22 +379,22 @@ class Eazyest_Folder_List_Table extends WP_List_Table {
 		global $post;
 		return array(
 			'save-sort'  => eazyest_admin()->folder_editor()->hidden_order_field( $this->items, 'pages' )
-		);		
+		);
 	}
-	
+
 	/**
 	 * Eazyest_Folder_List_Table::views()
 	 * ovveride WP_list_Table::views()
 	 * apply filter 'views_galleryfolder' to add views
-	 * 
+	 *
 	 * @since 0.1.0 (r2)
 	 * @uses apply_filters()
 	 * @return void
 	 */
 	function views() {
 		$views = $this->get_views();
-		$views = apply_filters( 'views_galleryfolder', $views );	
-		$views['save-sort'] = eazyest_admin()->folder_editor()->hidden_order_field( $this->items );			
+		$views = apply_filters( 'views_galleryfolder', $views );
+		$views['save-sort'] = eazyest_admin()->folder_editor()->hidden_order_field( $this->items );
 		echo "<ul class='subsubsub'>\n";
 		foreach ( $views as $class => $view ) {
 			$views[$class] = "\t<li class='$class'>$view";
@@ -402,10 +402,10 @@ class Eazyest_Folder_List_Table extends WP_List_Table {
 		echo implode( " |</li>\n", $views ) . "</li>\n";
 		echo "</ul>";
 	}
-	
+
 	/**
 	 * Eazyest_Folder_List_Table::bulk_actions()
-	 * 
+	 *
 	 * @since 0.1.0 (r2)
 	 * @uses submit_button
 	 * @return void
@@ -434,14 +434,14 @@ class Eazyest_Folder_List_Table extends WP_List_Table {
 		}
 
 		echo "</select>\n";
-		
+
 		submit_button( __( 'Apply', 'eazyest-gallery' ), 'action', false, false, array( 'id' => "do_folderaction$two" ) );
 		echo "\n";
-	}	
-	
+	}
+
 	/**
 	 * Eazyest_Folder_List_Table::single_row()
-	 * 
+	 *
 	 * @since 0.1.0 (r2)
 	 * @uses  get_post()
 	 * @uses setup_postdata()
@@ -455,7 +455,7 @@ class Eazyest_Folder_List_Table extends WP_List_Table {
 	 * @uses sanitize_term_field()
 	 * @uses add_query_arg()
 	 * @uses the_ID()
-	 * @uses wp_nonce_url() 
+	 * @uses wp_nonce_url()
 	 * @uses admin_url()
 	 * @uses get_delete_post_link()
 	 * @uses get_inline_data()
@@ -487,7 +487,7 @@ class Eazyest_Folder_List_Table extends WP_List_Table {
 
 		foreach ( $columns as $column_name => $column_display_name ) {
 			$class_name = $column_name;
-			if ( 'galleryfolder_drag' != $column_name )			
+			if ( 'galleryfolder_drag' != $column_name )
 				$class_name = false === strpos( $column_name, 'folder_') ? $column_name : substr( $column_name, 7 );
 			$class = "class=\"$class_name column-$class_name\"";
 
@@ -516,7 +516,7 @@ class Eazyest_Folder_List_Table extends WP_List_Table {
 
 					$level = eazyest_admin()->folder_editor()->folder_level( $post->ID, $post->post_parent );
 
-					$pad = str_repeat( '&#8212; ', $level );					
+					$pad = str_repeat( '&#8212; ', $level );
 					?>
 					<td <?php echo $attributes ?>><strong>
 					<a class="row-title" href="<?php echo $edit_link; ?>" title="<?php echo esc_attr( sprintf( __( 'Edit &#8220;%s&#8221;', 'eazyest-gallery' ), $title ) ); ?>"><?php echo $pad; echo $title ?></a></strong>
@@ -655,5 +655,5 @@ class Eazyest_Folder_List_Table extends WP_List_Table {
 	<?php
 		$GLOBALS['post'] = $global_post;
 	}
-	
+
 } // Eazyest_Folder_List_Table

@@ -28,7 +28,7 @@ weaverii_get_sidebar_left('archive');
 			<header class="page-header">
 			    <h1 class="page-title archive-title"><span class="archive-title-label">
 						<?php ezg_gallery_title() ?>
-					</span>	
+					</span>
 			    </h1>
 			</header>
 			<?php ezg_gallery_style() ?>
@@ -40,13 +40,13 @@ weaverii_get_sidebar_left('archive');
 				while ( have_posts() ) {
 				    the_post();
 				    weaverii_post_count_bump();
-	
+
 				    /* Include the Post-Format-specific template for the content.
 				     * If you want to overload this in a child theme then include a file
 				     * called content-___.php (where ___ is the Post Format name) and that will be used instead.
 				     */
-				    ezg_get_template_part( 'content', 'galleryfolder' );				
-						ezg_folders_break( ++$ezg_i ); 
+				    ezg_get_template_part( 'content', 'galleryfolder' );
+						ezg_folders_break( ++$ezg_i );
 				}
 			eazyest_gallery_content_nav( 'nav-below' );
 

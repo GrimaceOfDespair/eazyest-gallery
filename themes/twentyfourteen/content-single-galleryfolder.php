@@ -4,7 +4,7 @@
  *
  * @package Eazyest Gallery
  * @subpackage Twenty_Fourteen
- * @since 0.1.3 
+ * @since 0.1.3
  */
 ?>
 
@@ -17,7 +17,7 @@
 				</div><!-- .comments-link -->
 			<?php endif; // comments_open() ?>
 		</header><!-- .entry-header -->
-		
+
 		<div class="entry-content eazyest-gallery">
 			<?php do_action( 'eazyest_gallery_before_folder_content', $post->ID ); // this action uis used for breadcrumb trail and for thumbnail images ?>
 			<?php the_content( __( 'Continue reading <span class="meta-nav">&rarr;</span>', 'eazyest-gallery' ) ); // this is the text content like a regular WordPress post ?>
@@ -26,7 +26,7 @@
 		</div><!-- .entry-content -->
 
 		<footer class="entry-meta">
-			
+
 			<?php edit_post_link( __( 'Edit', 'eazyest-gallery' ), '<span class="edit-link">', '</span>' ); ?>
 			<?php if ( is_singular() && get_the_author_meta( 'description' ) && is_multi_author() ) : // If a user has filled out their description and this is a multi-author blog, show a bio on their entries. ?>
 				<div class="author-info">

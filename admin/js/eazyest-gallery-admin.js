@@ -1,14 +1,14 @@
 (function($) {
-	
+
 	$(document).ready(function(){
-		
+
 		// table drag and drop handlers
 		function doDragTable( dTable ) {
 			$( 'td.galleryfolder_drag' ).addClass( 'drag-handle' );
 			$( 'td.media_drag' ).addClass( 'drag-handle' );
-			
+
 			$( '.column-galleryfolder_drag, .column-media_drag' ).show();
-			
+
 			$( dTable ).tableDnD({
 				onDragClass : 'dragging',
 				dragHandle  : '.drag-handle',
@@ -33,22 +33,22 @@
 						$( '#gallery-order-media' ).val( dropStr );
 						$( '#gallery-changed-media').val( '1' );
 					}
-				} 
-			});	// $( dTable ).tableDnD					
+				}
+			});	// $( dTable ).tableDnD
 		}
-		
-		if ( $( '.column-galleryfolder_drag' ).length ) {			
-			doDragTable( '.wp-list-table.pages' );			
+
+		if ( $( '.column-galleryfolder_drag' ).length ) {
+			doDragTable( '.wp-list-table.pages' );
 		}
-		
+
 		if ( $( '.column-media_drag' ).length ) {
-			doDragTable( '.wp-list-table.media' );			
+			doDragTable( '.wp-list-table.media' );
 		}
-		
+
 		if ( $('.wp-editor-area').length ) {
 			var media = wp.media.editor.add('content');
-			// refresh media table when media editor closes 
-			media.on( 'close', function() { 
+			// refresh media table when media editor closes
+			media.on( 'close', function() {
 				var data = {
 					action : 'eazyest_gallery_upload',
 					_wpnonce : $( '#_wpnonce' ).val(),
@@ -61,7 +61,7 @@
 				return false;
 			});
 		}
-		
+
 		// handle changes in post status including 'hidden'
 		$('.save-post-visibility', '#post-visibility-select').click(function () { // crazyhorse - multiple ok cancels
 			var pvSelect = $('#post-visibility-select');
@@ -73,8 +73,8 @@
 			}
 			return false;
 		});
-						
+
 	}); // $(document).ready
-	
-	
+
+
 })(jQuery)

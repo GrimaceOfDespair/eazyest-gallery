@@ -4,7 +4,7 @@
  *
  * @package Eazyest Gallery
  * @subpackage Twenty_Fourteen
- * @since 0.1.3 
+ * @since 0.1.3
  */
 
 get_header(); ?>
@@ -22,7 +22,7 @@ get_header(); ?>
 				<?php ezg_get_template_part( 'content-single', 'galleryfolder' ); ?>
 
 
-				
+
 				<?php comments_template( '', true ); ?>
 
 			<?php endwhile; // end of the loop. ?>

@@ -26,7 +26,7 @@
 
 					<div class="entry-content eazyest-gallery">
 						<?php do_action( 'eazyest_gallery_before_folder_content', $post->ID ); // this action uis used for breadcrumb trail and for thumbnail images ?>
-						<?php the_content(); // this is the text content like a regular WordPress post ?> 
+						<?php the_content(); // this is the text content like a regular WordPress post ?>
 						<?php do_action( 'eazyest_gallery_after_folder_content', $post->ID ); // this action is used for extra fields and for subfolders ?>
 						<?php wp_link_pages( array( 'before' => '<div class="page-link">' . __( 'Pages:', 'eazyest-gallery' ), 'after' => '</div>' ) ); ?>
 					</div><!-- .entry-content -->

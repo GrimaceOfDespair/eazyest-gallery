@@ -14,7 +14,7 @@
 						$( '#' + ID + ' .gallery-item.bottom dt.gallery-icon').html( response );
 						$( '#' + ID + ' .gallery-item.bottom').animate({opacity: 1.0},500,function(){
 							$(this).addClass('top').removeClass('bottom')
-						});						
+						});
 						$( '#' + ID + ' .gallery-item.top').animate({opacity: 0.0},500,function(){
 							$(this).addClass('bottom').removeClass('top')
 						});
@@ -23,7 +23,7 @@
 			});
 		}, eazyestSlideshowSettings.timeOut );
 	}
-	
+
 	$(document).ready( function(){
 		$('.eazyest-ajax-slideshow').each(function(){
 			$(this).children('.top').css({opacity: 1.0});

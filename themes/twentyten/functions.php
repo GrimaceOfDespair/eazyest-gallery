@@ -2,9 +2,9 @@
 /**
  * eazyestgallery_theme_mods()
  * Update header image which is stored in _cache directory.
- * 
+ *
  * @param array $option theme_mods_twentyten
- * @return array 
+ * @return array
  */
 function eazyestgallery_theme_mods( $option ) {
 	if ( isset( $option['header_image'] ) ) {
@@ -23,11 +23,11 @@ function eazyestgallery_theme_mods( $option ) {
 			if ( $url != $option['header_image'] )
 				$option['header_image'] = $url;
 			if ( $url != $option['header_image_data']['url'] )
-				$option['header_image_data']['url'] = $url; 
+				$option['header_image_data']['url'] = $url;
 			if ( $url != $option['header_image_data']['thumbnail_url'] );
 				$option['header_image_data']['thumbnail_url'] = $url;
 		}
-	}	
+	}
 	return $option;
 }
 add_filter( 'pre_update_option_theme_mods_twentyten', 'eazyestgallery_theme_mods' );

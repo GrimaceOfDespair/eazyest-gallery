@@ -1,26 +1,26 @@
 (function($){
-	
+
 	$(window).load( function(){
 		// make all gallery items same height for responsive gallery
-		if ( $('.gallery-columns-0').length ) {				
+		if ( $('.gallery-columns-0').length ) {
 			var maxHeight = 0;
 			$('.gallery-columns-0').children('dl').each( function(){
 				if ( $(this).outerHeight() > maxHeight )
-					maxHeight = $(this).outerHeight(); 
-			});	
-			
+					maxHeight = $(this).outerHeight();
+			});
+
 			$('.gallery-columns-0').children('dl').each( function(){
 				$(this).css('height',maxHeight);
 			});
 		}
-		
+
 	}); // window.load
-	
+
 	function eazyestMoreButton() {
 		if ( $('nav.thumbnail-navigation').length ) {
 			$('nav.thumbnail-navigation .nav-previous').remove();
 			$('nav.thumbnail-navigation .nav-next').removeClass('nav-next alignright').addClass('nav-more alignleft');
-			var attribs = $('nav.thumbnail-navigation .nav-more a').attr('class').split('-');  
+			var attribs = $('nav.thumbnail-navigation .nav-more a').attr('class').split('-');
 			$('nav.thumbnail-navigation .nav-more a').addClass('button').html( eazyestFrontend.moreButton );
 			$('nav.thumbnail-navigation .nav-more').on( 'click', 'a', function() {
 				$(this).html( eazyestFrontend.moreButton + '&hellip;' );
@@ -38,9 +38,9 @@
 				})
 				return false;
 			});
-		}		
+		}
 	}
-	
+
 	function eazyestFolderButton() {
 		if ( $('nav.folder-navigation').length ) {
 			$('nav.folder-navigation .nav-previous').remove();
@@ -60,12 +60,12 @@
 				})
 				return false;
 			});
-		}		
+		}
 	}
-	
+
 	$(document).ready(function() {
 		eazyestMoreButton();
-		eazyestFolderButton()		
+		eazyestFolderButton()
 	});
-	
+
 })(jQuery)
