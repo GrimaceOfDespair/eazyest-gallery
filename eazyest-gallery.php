@@ -411,7 +411,8 @@ class Eazyest_Gallery {
 	 * @return string
 	 */
 	public function root( $relative = false ) {
-		$this->set_gallery_folder();
+		if ( ! isset( $this->relative_root ) )
+			$this->set_gallery_folder();
 		return $relative ? $this->relative_root : $this->root;
 	}
 
