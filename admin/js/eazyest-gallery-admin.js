@@ -45,22 +45,32 @@
 			doDragTable( '.wp-list-table.media' );
 		}
 
-		if ( $('.wp-editor-area').length ) {
-			var media = wp.media.editor.add('content');
-			// refresh media table when media editor closes
-			media.on( 'close', function() {
-				var data = {
-					action : 'eazyest_gallery_upload',
-					_wpnonce : $( '#_wpnonce' ).val(),
-					post     : $( '#post_ID' ).val(),
-				};
-				$.post( ajaxurl, data, function( response ){
-					$( '.attached-images' ).html( response );
-					doDragTable( '.wp-list-table.media' );
-				});
-				return false;
+		function updateMedia() {
+			var data = {
+				action : 'eazyest_gallery_upload',
+				_wpnonce : $( '#_wpnonce' ).val(),
+				post     : $( '#post_ID' ).val(),
+			};
+			$.post( ajaxurl, data, function( response ){
+				$( '.attached-images' ).html( response );
+				doDragTable( '.wp-list-table.media' );
 			});
 		}
+
+		// Initialize and render the Editor drag-and-drop uploader.
+		wp.media.featuredImage.frame().on( 'select', updateMedia );
+
+		$(document.body)
+			.on( 'click.add-media-button', '.insert-media', function( event ) {
+
+				// refresh media table when media editor closes
+				wp.media.editor
+					.add( 'content' )
+					.on( 'close', function() {
+						updateMedia();
+						return false;
+					});
+			});
 
 		// handle changes in post status including 'hidden'
 		$('.save-post-visibility', '#post-visibility-select').click(function () { // crazyhorse - multiple ok cancels
